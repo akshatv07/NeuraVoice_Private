@@ -149,7 +149,10 @@ export default function Landing() {
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             <Button
-              onClick={handleAssemble}
+              onClick={() => {
+                console.log("Assemble button clicked");
+                handleAssemble();
+              }}
               className="bg-gradient-to-r from-primary to-secondary hover:from-primary/80 hover:to-secondary/80 text-white font-semibold px-8 py-4 text-lg rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-primary/25"
               size="lg"
             >
@@ -361,102 +364,14 @@ export default function Landing() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-            {/* Animated Network Visualization */}
+          <div className="text-center max-w-4xl mx-auto">
+            {/* Main Integration Text */}
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              className="flex items-center justify-center"
-            >
-              <div className="relative w-80 h-80">
-                {/* Central Hub */}
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
-                  <i className="fas fa-brain text-white text-xl"></i>
-                </div>
-                
-                {/* Animated Connection Lines */}
-                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 320 320">
-                  {Array.from({ length: 12 }).map((_, i) => {
-                    const angle = (i * 30) * Math.PI / 180;
-                    const x1 = 160;
-                    const y1 = 160;
-                    const x2 = 160 + 120 * Math.cos(angle);
-                    const y2 = 160 + 120 * Math.sin(angle);
-                    
-                    return (
-                      <motion.line
-                        key={i}
-                        x1={x1}
-                        y1={y1}
-                        x2={x2}
-                        y2={y2}
-                        stroke="url(#gradient)"
-                        strokeWidth="1"
-                        opacity="0.3"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 2, delay: i * 0.1, repeat: Infinity, repeatType: "reverse" }}
-                      />
-                    );
-                  })}
-                  <defs>
-                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="hsl(var(--primary))" />
-                      <stop offset="100%" stopColor="hsl(var(--accent))" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-                
-                {/* Orbiting Platform Icons */}
-                {[
-                  { icon: "fab fa-whatsapp", color: "text-green-400", delay: 0 },
-                  { icon: "fab fa-instagram", color: "text-pink-400", delay: 1 },
-                  { icon: "fab fa-facebook", color: "text-blue-400", delay: 2 },
-                  { icon: "fab fa-salesforce", color: "text-blue-500", delay: 3 },
-                  { icon: "fas fa-chart-line", color: "text-orange-400", delay: 4 },
-                  { icon: "fab fa-slack", color: "text-purple-400", delay: 5 },
-                  { icon: "fab fa-discord", color: "text-indigo-400", delay: 6 },
-                  { icon: "fas fa-headset", color: "text-green-500", delay: 7 },
-                  { icon: "fab fa-telegram", color: "text-cyan-400", delay: 8 },
-                  { icon: "fas fa-building", color: "text-red-400", delay: 9 },
-                  { icon: "fas fa-funnel-dollar", color: "text-purple-500", delay: 10 },
-                  { icon: "fas fa-ticket-alt", color: "text-teal-400", delay: 11 }
-                ].map((platform, index) => {
-                  const angle = (index * 30) * Math.PI / 180;
-                  return (
-                    <motion.div
-                      key={index}
-                      className="absolute w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center backdrop-blur-sm"
-                      style={{
-                        top: `${50 + 35 * Math.sin(angle)}%`,
-                        left: `${50 + 35 * Math.cos(angle)}%`,
-                        transform: 'translate(-50%, -50%)'
-                      }}
-                      animate={{
-                        scale: [1, 1.2, 1],
-                        rotate: [0, 360]
-                      }}
-                      transition={{
-                        scale: { duration: 2, repeat: Infinity, delay: platform.delay * 0.2 },
-                        rotate: { duration: 20, repeat: Infinity, ease: "linear" }
-                      }}
-                    >
-                      <i className={`${platform.icon} text-sm ${platform.color}`}></i>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </motion.div>
-
-            {/* Integration Text Content */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="flex flex-col justify-center"
+              className="mb-12"
             >
               <h3 className="text-3xl md:text-4xl font-bold text-white mb-6">
                 Integrate with more than{" "}
@@ -465,53 +380,46 @@ export default function Landing() {
                 </span>{" "}
                 in a snap.
               </h3>
-              
-              {/* Moving Platform Logos */}
-              <div className="space-y-6 overflow-hidden">
-                {/* Top Row - Moving Left to Right */}
-                <motion.div 
-                  className="flex gap-4 whitespace-nowrap"
-                  animate={{ x: [-100, 100] }}
-                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            </motion.div>
+            
+            {/* Platform Grid */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="grid grid-cols-4 md:grid-cols-8 gap-4 mb-12"
+            >
+              {[
+                { icon: "fab fa-whatsapp", color: "text-green-400", name: "WhatsApp" },
+                { icon: "fab fa-instagram", color: "text-pink-400", name: "Instagram" },
+                { icon: "fab fa-facebook-messenger", color: "text-blue-400", name: "Messenger" },
+                { icon: "fas fa-chart-line", color: "text-orange-400", name: "Analytics" },
+                { icon: "fab fa-slack", color: "text-purple-400", name: "Slack" },
+                { icon: "fab fa-discord", color: "text-indigo-400", name: "Discord" },
+                { icon: "fab fa-microsoft", color: "text-blue-300", name: "Microsoft" },
+                { icon: "fab fa-google", color: "text-red-300", name: "Google" },
+                { icon: "fab fa-facebook", color: "text-blue-500", name: "Facebook" },
+                { icon: "fab fa-salesforce", color: "text-blue-600", name: "Salesforce" },
+                { icon: "fas fa-building", color: "text-red-400", name: "Zoho" },
+                { icon: "fas fa-headset", color: "text-green-500", name: "Support" },
+                { icon: "fab fa-telegram", color: "text-cyan-400", name: "Telegram" },
+                { icon: "fas fa-funnel-dollar", color: "text-purple-500", name: "CRM" },
+                { icon: "fas fa-ticket-alt", color: "text-teal-400", name: "Zendesk" },
+                { icon: "fas fa-phone", color: "text-primary", name: "Phone" }
+              ].map((platform, index) => (
+                <motion.div
+                  key={index}
+                  className="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm hover:bg-white/20 transition-all duration-300"
+                  whileHover={{ scale: 1.1 }}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4, delay: index * 0.05 }}
+                  viewport={{ once: true }}
                 >
-                  {[
-                    { icon: "fab fa-whatsapp", color: "text-green-400" },
-                    { icon: "fab fa-instagram", color: "text-pink-400" },
-                    { icon: "fab fa-salesforce", color: "text-blue-500" },
-                    { icon: "fas fa-chart-line", color: "text-orange-400" },
-                    { icon: "fab fa-slack", color: "text-purple-400" },
-                    { icon: "fab fa-discord", color: "text-indigo-400" },
-                    { icon: "fas fa-headset", color: "text-green-500" },
-                    { icon: "fab fa-telegram", color: "text-cyan-400" }
-                  ].map((platform, index) => (
-                    <div key={index} className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <i className={`${platform.icon} text-lg ${platform.color}`}></i>
-                    </div>
-                  ))}
+                  <i className={`${platform.icon} text-xl ${platform.color}`}></i>
                 </motion.div>
-                
-                {/* Bottom Row - Moving Right to Left */}
-                <motion.div 
-                  className="flex gap-4 whitespace-nowrap"
-                  animate={{ x: [100, -100] }}
-                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                >
-                  {[
-                    { icon: "fab fa-facebook", color: "text-blue-400" },
-                    { icon: "fas fa-building", color: "text-red-400" },
-                    { icon: "fas fa-funnel-dollar", color: "text-purple-500" },
-                    { icon: "fas fa-ticket-alt", color: "text-teal-400" },
-                    { icon: "fab fa-microsoft", color: "text-blue-300" },
-                    { icon: "fab fa-google", color: "text-red-300" },
-                    { icon: "fas fa-phone", color: "text-primary" },
-                    { icon: "fas fa-envelope", color: "text-secondary" }
-                  ].map((platform, index) => (
-                    <div key={index} className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <i className={`${platform.icon} text-lg ${platform.color}`}></i>
-                    </div>
-                  ))}
-                </motion.div>
-              </div>
+              ))}
             </motion.div>
           </div>
 
