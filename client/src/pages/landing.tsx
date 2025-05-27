@@ -16,6 +16,10 @@ export default function Landing() {
     setLocation("/dashboard");
   };
 
+  const handleAssemble = () => {
+    setLocation("/assembly");
+  };
+
   const handleTalkToLenden = () => {
     // Placeholder for LiveKit integration
     alert("LiveKit integration would be implemented here for voice demo");
@@ -145,7 +149,7 @@ export default function Landing() {
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             <Button
-              onClick={isAuthenticated ? handleDashboard : handleLogin}
+              onClick={handleAssemble}
               className="bg-gradient-to-r from-primary to-secondary hover:from-primary/80 hover:to-secondary/80 text-white font-semibold px-8 py-4 text-lg rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-primary/25"
               size="lg"
             >
@@ -185,152 +189,72 @@ export default function Landing() {
             </p>
           </motion.div>
 
-          <div className="max-w-5xl mx-auto">
-            {[
-              {
-                step: "01",
-                title: "Upload Knowledge Base",
-                description: "Upload your business documents, FAQs, or data to train the AI with your expertise",
-                icon: "fas fa-cloud-upload-alt",
-                gradient: "from-primary to-secondary"
-              },
-              {
-                step: "02",
-                title: "Choose Voice",
-                description: "Select from a variety of lifelike AI voices to perfectly represent your brand",
-                icon: "fas fa-microphone",
-                gradient: "from-secondary to-accent"
-              },
-              {
-                step: "03",
-                title: "Assign a Goal",
-                description: "Define your AI agent's purpose and objectives for targeted conversations",
-                icon: "fas fa-bullseye",
-                gradient: "from-accent to-coral"
-              },
-              {
-                step: "04",
-                title: "Test the Bot",
-                description: "Test and refine your voice agent's responses and behavior before going live",
-                icon: "fas fa-play-circle",
-                gradient: "from-coral to-primary"
-              },
-              {
-                step: "05",
-                title: "Go Live",
-                description: "Integrate with WhatsApp, Instagram, CRM systems and deploy instantly",
-                icon: "fas fa-rocket",
-                gradient: "from-primary to-accent"
-              }
-            ].map((step, index) => (
-              <motion.div
-                key={index}
-                className="mb-12 last:mb-0"
-                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.15 }}
-                viewport={{ once: true }}
-              >
-                <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
-                  <div className={`${index % 2 === 1 ? 'lg:order-2' : ''}`}>
-                    <div className="flex items-start gap-6">
-                      <div className={`w-16 h-16 bg-gradient-to-r ${step.gradient} rounded-2xl flex items-center justify-center text-white font-bold text-xl flex-shrink-0`}>
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+              {[
+                {
+                  step: "01",
+                  title: "Upload Knowledge Base",
+                  description: "Upload your business documents, FAQs, or data to train the AI",
+                  icon: "fas fa-cloud-upload-alt",
+                  gradient: "from-primary to-secondary"
+                },
+                {
+                  step: "02",
+                  title: "Choose Voice",
+                  description: "Select from lifelike AI voices to represent your brand",
+                  icon: "fas fa-microphone",
+                  gradient: "from-secondary to-accent"
+                },
+                {
+                  step: "03",
+                  title: "Assign a Goal",
+                  description: "Define your AI agent's purpose and objectives",
+                  icon: "fas fa-bullseye",
+                  gradient: "from-accent to-coral"
+                },
+                {
+                  step: "04",
+                  title: "Test the Bot",
+                  description: "Test and refine responses before going live",
+                  icon: "fas fa-play-circle",
+                  gradient: "from-coral to-primary"
+                },
+                {
+                  step: "05",
+                  title: "Go Live",
+                  description: "Deploy instantly across platforms",
+                  icon: "fas fa-rocket",
+                  gradient: "from-primary to-accent"
+                }
+              ].map((step, index) => (
+                <motion.div
+                  key={index}
+                  className="group text-center"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <Card className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-all duration-500 transform hover:scale-105 h-full p-6">
+                    <div className={`w-16 h-16 bg-gradient-to-r ${step.gradient} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-all duration-300`}>
+                      <div className={`w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center text-white font-bold text-sm`}>
                         {step.step}
                       </div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-white mb-3">{step.title}</h3>
-                        <p className="text-lg text-gray-300 leading-relaxed">{step.description}</p>
-                      </div>
                     </div>
-                  </div>
-                  
-                  <div className={`${index % 2 === 1 ? 'lg:order-1' : ''}`}>
-                    <Card className="bg-white/5 backdrop-blur-sm border-white/10 p-8 h-64 flex items-center justify-center group hover:bg-white/10 transition-all duration-500">
-                      <div className="text-center">
-                        <motion.div
-                          className={`w-24 h-24 bg-gradient-to-r ${step.gradient} rounded-3xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-all duration-500`}
-                          whileHover={{ rotate: 360 }}
-                          transition={{ duration: 0.6 }}
-                        >
-                          <motion.i 
-                            className={`${step.icon} text-3xl text-white`}
-                            animate={{
-                              scale: [1, 1.1, 1],
-                            }}
-                            transition={{
-                              duration: 2,
-                              repeat: Infinity,
-                              delay: index * 0.3
-                            }}
-                          />
-                        </motion.div>
-                        
-                        {/* Dynamic visual elements based on step */}
-                        {step.step === "01" && (
-                          <motion.div className="flex justify-center gap-1 mt-4">
-                            {Array.from({ length: 5 }).map((_, i) => (
-                              <motion.div
-                                key={i}
-                                className={`w-2 h-8 bg-gradient-to-t ${step.gradient} rounded-full`}
-                                animate={{
-                                  height: [32, 16, 32],
-                                  opacity: [0.6, 1, 0.6]
-                                }}
-                                transition={{
-                                  duration: 1.5,
-                                  repeat: Infinity,
-                                  delay: i * 0.2
-                                }}
-                              />
-                            ))}
-                          </motion.div>
-                        )}
-                        
-                        {step.step === "02" && (
-                          <motion.div className="flex justify-center items-center gap-2 mt-4">
-                            {Array.from({ length: 3 }).map((_, i) => (
-                              <motion.div
-                                key={i}
-                                className={`w-3 h-3 bg-gradient-to-r ${step.gradient} rounded-full`}
-                                animate={{
-                                  y: [0, -10, 0],
-                                }}
-                                transition={{
-                                  duration: 1,
-                                  repeat: Infinity,
-                                  delay: i * 0.3
-                                }}
-                              />
-                            ))}
-                          </motion.div>
-                        )}
-                        
-                        {step.step === "05" && (
-                          <motion.div className="flex justify-center gap-2 mt-4">
-                            {["fab fa-whatsapp", "fab fa-instagram", "fas fa-chart-line"].map((icon, i) => (
-                              <motion.div
-                                key={i}
-                                className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center"
-                                animate={{
-                                  scale: [1, 1.2, 1],
-                                }}
-                                transition={{
-                                  duration: 2,
-                                  repeat: Infinity,
-                                  delay: i * 0.4
-                                }}
-                              >
-                                <i className={`${icon} text-sm text-white`}></i>
-                              </motion.div>
-                            ))}
-                          </motion.div>
-                        )}
-                      </div>
-                    </Card>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                    <motion.div
+                      className={`w-12 h-12 bg-gradient-to-r ${step.gradient} rounded-xl flex items-center justify-center mx-auto mb-4`}
+                      whileHover={{ rotate: 360 }}
+                      transition={{ duration: 0.6 }}
+                    >
+                      <i className={`${step.icon} text-xl text-white`}></i>
+                    </motion.div>
+                    <h3 className="text-lg font-semibold mb-3 text-white">{step.title}</h3>
+                    <p className="text-gray-300 text-sm leading-relaxed">{step.description}</p>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -438,76 +362,156 @@ export default function Landing() {
           </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-            {/* Communication Platforms */}
+            {/* Animated Network Visualization */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
+              className="flex items-center justify-center"
             >
-              <Card className="bg-white/5 backdrop-blur-sm border-white/10 p-8 h-full">
-                <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                  <i className="fas fa-comments text-primary"></i>
-                  Communication Platforms
-                </h3>
-                <div className="grid grid-cols-3 gap-6">
-                  {[
-                    { name: "WhatsApp", icon: "fab fa-whatsapp", color: "text-green-400" },
-                    { name: "Instagram", icon: "fab fa-instagram", color: "text-pink-400" },
-                    { name: "Facebook", icon: "fab fa-facebook", color: "text-blue-400" },
-                    { name: "Telegram", icon: "fab fa-telegram", color: "text-cyan-400" },
-                    { name: "Discord", icon: "fab fa-discord", color: "text-indigo-400" },
-                    { name: "Slack", icon: "fab fa-slack", color: "text-purple-400" }
-                  ].map((platform, index) => (
+              <div className="relative w-80 h-80">
+                {/* Central Hub */}
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
+                  <i className="fas fa-brain text-white text-xl"></i>
+                </div>
+                
+                {/* Animated Connection Lines */}
+                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 320 320">
+                  {Array.from({ length: 12 }).map((_, i) => {
+                    const angle = (i * 30) * Math.PI / 180;
+                    const x1 = 160;
+                    const y1 = 160;
+                    const x2 = 160 + 120 * Math.cos(angle);
+                    const y2 = 160 + 120 * Math.sin(angle);
+                    
+                    return (
+                      <motion.line
+                        key={i}
+                        x1={x1}
+                        y1={y1}
+                        x2={x2}
+                        y2={y2}
+                        stroke="url(#gradient)"
+                        strokeWidth="1"
+                        opacity="0.3"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{ duration: 2, delay: i * 0.1, repeat: Infinity, repeatType: "reverse" }}
+                      />
+                    );
+                  })}
+                  <defs>
+                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="hsl(var(--primary))" />
+                      <stop offset="100%" stopColor="hsl(var(--accent))" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                
+                {/* Orbiting Platform Icons */}
+                {[
+                  { icon: "fab fa-whatsapp", color: "text-green-400", delay: 0 },
+                  { icon: "fab fa-instagram", color: "text-pink-400", delay: 1 },
+                  { icon: "fab fa-facebook", color: "text-blue-400", delay: 2 },
+                  { icon: "fab fa-salesforce", color: "text-blue-500", delay: 3 },
+                  { icon: "fas fa-chart-line", color: "text-orange-400", delay: 4 },
+                  { icon: "fab fa-slack", color: "text-purple-400", delay: 5 },
+                  { icon: "fab fa-discord", color: "text-indigo-400", delay: 6 },
+                  { icon: "fas fa-headset", color: "text-green-500", delay: 7 },
+                  { icon: "fab fa-telegram", color: "text-cyan-400", delay: 8 },
+                  { icon: "fas fa-building", color: "text-red-400", delay: 9 },
+                  { icon: "fas fa-funnel-dollar", color: "text-purple-500", delay: 10 },
+                  { icon: "fas fa-ticket-alt", color: "text-teal-400", delay: 11 }
+                ].map((platform, index) => {
+                  const angle = (index * 30) * Math.PI / 180;
+                  return (
                     <motion.div
                       key={index}
-                      className="text-center group"
-                      whileHover={{ scale: 1.05 }}
+                      className="absolute w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center backdrop-blur-sm"
+                      style={{
+                        top: `${50 + 35 * Math.sin(angle)}%`,
+                        left: `${50 + 35 * Math.cos(angle)}%`,
+                        transform: 'translate(-50%, -50%)'
+                      }}
+                      animate={{
+                        scale: [1, 1.2, 1],
+                        rotate: [0, 360]
+                      }}
+                      transition={{
+                        scale: { duration: 2, repeat: Infinity, delay: platform.delay * 0.2 },
+                        rotate: { duration: 20, repeat: Infinity, ease: "linear" }
+                      }}
                     >
-                      <div className="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-white/20 transition-all duration-300">
-                        <i className={`${platform.icon} text-2xl ${platform.color}`}></i>
-                      </div>
-                      <p className="text-sm text-gray-300">{platform.name}</p>
+                      <i className={`${platform.icon} text-sm ${platform.color}`}></i>
                     </motion.div>
-                  ))}
-                </div>
-              </Card>
+                  );
+                })}
+              </div>
             </motion.div>
 
-            {/* CRM & Business Tools */}
+            {/* Integration Text Content */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
+              className="flex flex-col justify-center"
             >
-              <Card className="bg-white/5 backdrop-blur-sm border-white/10 p-8 h-full">
-                <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                  <i className="fas fa-briefcase text-secondary"></i>
-                  CRM & Business Tools
-                </h3>
-                <div className="grid grid-cols-3 gap-6">
+              <h3 className="text-3xl md:text-4xl font-bold text-white mb-6">
+                Integrate with more than{" "}
+                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  20+ platforms
+                </span>{" "}
+                in a snap.
+              </h3>
+              
+              {/* Moving Platform Logos */}
+              <div className="space-y-6 overflow-hidden">
+                {/* Top Row - Moving Left to Right */}
+                <motion.div 
+                  className="flex gap-4 whitespace-nowrap"
+                  animate={{ x: [-100, 100] }}
+                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                >
                   {[
-                    { name: "Salesforce", icon: "fab fa-salesforce", color: "text-blue-500" },
-                    { name: "HubSpot", icon: "fas fa-chart-line", color: "text-orange-400" },
-                    { name: "Zoho", icon: "fas fa-building", color: "text-red-400" },
-                    { name: "Freshdesk", icon: "fas fa-headset", color: "text-green-500" },
-                    { name: "Pipedrive", icon: "fas fa-funnel-dollar", color: "text-purple-500" },
-                    { name: "Zendesk", icon: "fas fa-ticket-alt", color: "text-teal-400" }
+                    { icon: "fab fa-whatsapp", color: "text-green-400" },
+                    { icon: "fab fa-instagram", color: "text-pink-400" },
+                    { icon: "fab fa-salesforce", color: "text-blue-500" },
+                    { icon: "fas fa-chart-line", color: "text-orange-400" },
+                    { icon: "fab fa-slack", color: "text-purple-400" },
+                    { icon: "fab fa-discord", color: "text-indigo-400" },
+                    { icon: "fas fa-headset", color: "text-green-500" },
+                    { icon: "fab fa-telegram", color: "text-cyan-400" }
                   ].map((platform, index) => (
-                    <motion.div
-                      key={index}
-                      className="text-center group"
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      <div className="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-white/20 transition-all duration-300">
-                        <i className={`${platform.icon} text-2xl ${platform.color}`}></i>
-                      </div>
-                      <p className="text-sm text-gray-300">{platform.name}</p>
-                    </motion.div>
+                    <div key={index} className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <i className={`${platform.icon} text-lg ${platform.color}`}></i>
+                    </div>
                   ))}
-                </div>
-              </Card>
+                </motion.div>
+                
+                {/* Bottom Row - Moving Right to Left */}
+                <motion.div 
+                  className="flex gap-4 whitespace-nowrap"
+                  animate={{ x: [100, -100] }}
+                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                >
+                  {[
+                    { icon: "fab fa-facebook", color: "text-blue-400" },
+                    { icon: "fas fa-building", color: "text-red-400" },
+                    { icon: "fas fa-funnel-dollar", color: "text-purple-500" },
+                    { icon: "fas fa-ticket-alt", color: "text-teal-400" },
+                    { icon: "fab fa-microsoft", color: "text-blue-300" },
+                    { icon: "fab fa-google", color: "text-red-300" },
+                    { icon: "fas fa-phone", color: "text-primary" },
+                    { icon: "fas fa-envelope", color: "text-secondary" }
+                  ].map((platform, index) => (
+                    <div key={index} className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <i className={`${platform.icon} text-lg ${platform.color}`}></i>
+                    </div>
+                  ))}
+                </motion.div>
+              </div>
             </motion.div>
           </div>
 
