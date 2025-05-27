@@ -178,113 +178,106 @@ export default function Landing() {
             viewport={{ once: true }}
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-              Try in minutes. Deploy in days.
+              How Does It Work?
             </h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Transform your business with AI-powered voice agents in 3 revolutionary steps
+              Transform your business with AI-powered voice agents in 5 simple steps
             </p>
           </motion.div>
 
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-5xl mx-auto">
             {[
               {
                 step: "01",
-                title: "Choose your workflow",
-                description: "Pick from 1000s of pre-made templates, or build one yourself",
-                visual: "sound-wave",
+                title: "Upload Knowledge Base",
+                description: "Upload your business documents, FAQs, or data to train the AI with your expertise",
+                icon: "fas fa-cloud-upload-alt",
                 gradient: "from-primary to-secondary"
               },
               {
-                step: "02", 
-                title: "Plug it in",
-                description: "Whether it's in your telephony, website, or in your app, we have it covered",
-                visual: "network",
+                step: "02",
+                title: "Choose Voice",
+                description: "Select from a variety of lifelike AI voices to perfectly represent your brand",
+                icon: "fas fa-microphone",
                 gradient: "from-secondary to-accent"
               },
               {
                 step: "03",
-                title: "Done",
-                description: "Handle millions of calls and watch how they perform",
-                visual: "success",
+                title: "Assign a Goal",
+                description: "Define your AI agent's purpose and objectives for targeted conversations",
+                icon: "fas fa-bullseye",
                 gradient: "from-accent to-coral"
+              },
+              {
+                step: "04",
+                title: "Test the Bot",
+                description: "Test and refine your voice agent's responses and behavior before going live",
+                icon: "fas fa-play-circle",
+                gradient: "from-coral to-primary"
+              },
+              {
+                step: "05",
+                title: "Go Live",
+                description: "Integrate with WhatsApp, Instagram, CRM systems and deploy instantly",
+                icon: "fas fa-rocket",
+                gradient: "from-primary to-accent"
               }
             ].map((step, index) => (
               <motion.div
                 key={index}
-                className="mb-16 last:mb-0"
+                className="mb-12 last:mb-0"
                 initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
+                transition={{ duration: 0.8, delay: index * 0.15 }}
                 viewport={{ once: true }}
               >
                 <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
                   <div className={`${index % 2 === 1 ? 'lg:order-2' : ''}`}>
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className={`w-12 h-12 bg-gradient-to-r ${step.gradient} rounded-lg flex items-center justify-center text-white font-bold text-lg`}>
+                    <div className="flex items-start gap-6">
+                      <div className={`w-16 h-16 bg-gradient-to-r ${step.gradient} rounded-2xl flex items-center justify-center text-white font-bold text-xl flex-shrink-0`}>
                         {step.step}
                       </div>
                       <div>
-                        <h3 className="text-3xl font-bold text-white mb-2">{step.title}</h3>
-                        <p className="text-lg text-gray-300">{step.description}</p>
+                        <h3 className="text-2xl font-bold text-white mb-3">{step.title}</h3>
+                        <p className="text-lg text-gray-300 leading-relaxed">{step.description}</p>
                       </div>
                     </div>
                   </div>
                   
                   <div className={`${index % 2 === 1 ? 'lg:order-1' : ''}`}>
-                    <Card className="bg-white/5 backdrop-blur-sm border-white/10 p-8 h-64 flex items-center justify-center">
+                    <Card className="bg-white/5 backdrop-blur-sm border-white/10 p-8 h-64 flex items-center justify-center group hover:bg-white/10 transition-all duration-500">
                       <div className="text-center">
-                        {step.visual === "sound-wave" && (
-                          <motion.div 
-                            className="flex justify-center items-end gap-1 h-24"
-                            initial={{ opacity: 0 }}
-                            whileInView={{ opacity: 1 }}
-                            transition={{ duration: 1 }}
-                          >
-                            {Array.from({ length: 12 }).map((_, i) => (
-                              <motion.div
-                                key={i}
-                                className={`w-3 bg-gradient-to-t ${step.gradient} rounded-full`}
-                                style={{ height: `${20 + Math.sin(i * 0.5) * 30}px` }}
-                                animate={{
-                                  height: [
-                                    `${20 + Math.sin(i * 0.5) * 30}px`,
-                                    `${40 + Math.sin(i * 0.5 + Math.PI) * 30}px`,
-                                    `${20 + Math.sin(i * 0.5) * 30}px`
-                                  ]
-                                }}
-                                transition={{
-                                  duration: 2,
-                                  repeat: Infinity,
-                                  delay: i * 0.1
-                                }}
-                              />
-                            ))}
-                          </motion.div>
-                        )}
+                        <motion.div
+                          className={`w-24 h-24 bg-gradient-to-r ${step.gradient} rounded-3xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-all duration-500`}
+                          whileHover={{ rotate: 360 }}
+                          transition={{ duration: 0.6 }}
+                        >
+                          <motion.i 
+                            className={`${step.icon} text-3xl text-white`}
+                            animate={{
+                              scale: [1, 1.1, 1],
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                              delay: index * 0.3
+                            }}
+                          />
+                        </motion.div>
                         
-                        {step.visual === "network" && (
-                          <motion.div 
-                            className="relative w-32 h-32 mx-auto"
-                            initial={{ opacity: 0 }}
-                            whileInView={{ opacity: 1 }}
-                            transition={{ duration: 1 }}
-                          >
-                            <div className={`absolute inset-0 bg-gradient-to-r ${step.gradient} rounded-full opacity-20`}></div>
-                            {Array.from({ length: 8 }).map((_, i) => (
+                        {/* Dynamic visual elements based on step */}
+                        {step.step === "01" && (
+                          <motion.div className="flex justify-center gap-1 mt-4">
+                            {Array.from({ length: 5 }).map((_, i) => (
                               <motion.div
                                 key={i}
-                                className={`absolute w-3 h-3 bg-gradient-to-r ${step.gradient} rounded-full`}
-                                style={{
-                                  top: `${50 + 40 * Math.sin(i * Math.PI / 4)}%`,
-                                  left: `${50 + 40 * Math.cos(i * Math.PI / 4)}%`,
-                                  transform: 'translate(-50%, -50%)'
-                                }}
+                                className={`w-2 h-8 bg-gradient-to-t ${step.gradient} rounded-full`}
                                 animate={{
-                                  scale: [1, 1.5, 1],
+                                  height: [32, 16, 32],
                                   opacity: [0.6, 1, 0.6]
                                 }}
                                 transition={{
-                                  duration: 2,
+                                  duration: 1.5,
                                   repeat: Infinity,
                                   delay: i * 0.2
                                 }}
@@ -293,26 +286,43 @@ export default function Landing() {
                           </motion.div>
                         )}
                         
-                        {step.visual === "success" && (
-                          <motion.div 
-                            className="relative"
-                            initial={{ opacity: 0, scale: 0 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.8, type: "spring" }}
-                          >
-                            <div className={`w-24 h-24 bg-gradient-to-r ${step.gradient} rounded-full flex items-center justify-center mx-auto`}>
-                              <motion.i 
-                                className="fas fa-check text-4xl text-white"
-                                initial={{ opacity: 0 }}
-                                whileInView={{ opacity: 1 }}
-                                transition={{ delay: 0.5 }}
+                        {step.step === "02" && (
+                          <motion.div className="flex justify-center items-center gap-2 mt-4">
+                            {Array.from({ length: 3 }).map((_, i) => (
+                              <motion.div
+                                key={i}
+                                className={`w-3 h-3 bg-gradient-to-r ${step.gradient} rounded-full`}
+                                animate={{
+                                  y: [0, -10, 0],
+                                }}
+                                transition={{
+                                  duration: 1,
+                                  repeat: Infinity,
+                                  delay: i * 0.3
+                                }}
                               />
-                            </div>
-                            <motion.div
-                              className={`absolute -inset-4 bg-gradient-to-r ${step.gradient} rounded-full opacity-20`}
-                              animate={{ scale: [1, 1.2, 1] }}
-                              transition={{ duration: 2, repeat: Infinity }}
-                            />
+                            ))}
+                          </motion.div>
+                        )}
+                        
+                        {step.step === "05" && (
+                          <motion.div className="flex justify-center gap-2 mt-4">
+                            {["fab fa-whatsapp", "fab fa-instagram", "fas fa-chart-line"].map((icon, i) => (
+                              <motion.div
+                                key={i}
+                                className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center"
+                                animate={{
+                                  scale: [1, 1.2, 1],
+                                }}
+                                transition={{
+                                  duration: 2,
+                                  repeat: Infinity,
+                                  delay: i * 0.4
+                                }}
+                              >
+                                <i className={`${icon} text-sm text-white`}></i>
+                              </motion.div>
+                            ))}
                           </motion.div>
                         )}
                       </div>
@@ -501,34 +511,20 @@ export default function Landing() {
             </motion.div>
           </div>
 
-          {/* Additional Integration Categories */}
+          {/* Call to Action */}
           <motion.div 
-            className="mt-12 text-center"
+            className="mt-16 text-center"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-              {[
-                { title: "E-commerce", icon: "fas fa-shopping-cart", count: "20+" },
-                { title: "Analytics", icon: "fas fa-chart-bar", count: "15+" },
-                { title: "Telephony", icon: "fas fa-phone", count: "25+" },
-                { title: "Custom APIs", icon: "fas fa-code", count: "∞" }
-              ].map((category, index) => (
-                <motion.div
-                  key={index}
-                  className="text-center"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <div className="w-20 h-20 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <i className={`${category.icon} text-2xl text-white`}></i>
-                  </div>
-                  <h4 className="text-lg font-semibold text-white mb-2">{category.title}</h4>
-                  <p className="text-sm text-gray-300">{category.count} integrations</p>
-                </motion.div>
-              ))}
-            </div>
+            <h3 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Try in minutes. Deploy in days.
+            </h3>
+            <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+              Get started with NeuraVoice today and transform your business communications with intelligent voice agents.
+            </p>
           </motion.div>
         </div>
       </section>
@@ -573,8 +569,8 @@ export default function Landing() {
 
                       <div className="grid grid-cols-2 gap-6 mt-8">
                         <div className="text-center">
-                          <div className="text-3xl font-bold text-accent mb-2">5min</div>
-                          <div className="text-sm text-gray-300">Deployment Time</div>
+                          <div className="text-3xl font-bold text-accent mb-2">Fast</div>
+                          <div className="text-sm text-gray-300">Deployment</div>
                         </div>
                         <div className="text-center">
                           <div className="text-3xl font-bold text-primary mb-2">0</div>
@@ -614,22 +610,33 @@ export default function Landing() {
             <div className="flex items-center gap-6">
               <motion.a 
                 href="#" 
-                className="w-10 h-10 bg-white/10 hover:bg-primary/20 rounded-lg flex items-center justify-center transition-all duration-300"
+                className="w-10 h-10 bg-white/10 hover:bg-blue-500/20 rounded-lg flex items-center justify-center transition-all duration-300"
                 whileHover={{ scale: 1.1 }}
+                title="Join our LinkedIn community"
               >
                 <i className="fab fa-linkedin text-blue-400"></i>
               </motion.a>
               <motion.a 
                 href="#" 
-                className="w-10 h-10 bg-white/10 hover:bg-pink-500/20 rounded-lg flex items-center justify-center transition-all duration-300"
+                className="w-10 h-10 bg-white/10 hover:bg-indigo-500/20 rounded-lg flex items-center justify-center transition-all duration-300"
                 whileHover={{ scale: 1.1 }}
+                title="Join our Discord community"
               >
-                <i className="fab fa-instagram text-pink-400"></i>
+                <i className="fab fa-discord text-indigo-400"></i>
+              </motion.a>
+              <motion.a 
+                href="#" 
+                className="w-10 h-10 bg-white/10 hover:bg-purple-500/20 rounded-lg flex items-center justify-center transition-all duration-300"
+                whileHover={{ scale: 1.1 }}
+                title="Join our Slack community"
+              >
+                <i className="fab fa-slack text-purple-400"></i>
               </motion.a>
               <motion.a 
                 href="#" 
                 className="w-10 h-10 bg-white/10 hover:bg-accent/20 rounded-lg flex items-center justify-center transition-all duration-300"
                 whileHover={{ scale: 1.1 }}
+                title="Visit our website"
               >
                 <i className="fas fa-globe text-accent"></i>
               </motion.a>
