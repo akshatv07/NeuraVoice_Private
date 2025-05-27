@@ -150,8 +150,7 @@ export default function Landing() {
           >
             <Button
               onClick={() => {
-                console.log("Assemble button clicked");
-                handleAssemble();
+                window.location.href = "/assembly";
               }}
               className="bg-gradient-to-r from-primary to-secondary hover:from-primary/80 hover:to-secondary/80 text-white font-semibold px-8 py-4 text-lg rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-primary/25"
               size="lg"
@@ -373,7 +372,7 @@ export default function Landing() {
               viewport={{ once: true }}
               className="mb-12"
             >
-              <h3 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              <h3 className="text-2xl md:text-3xl font-bold text-white mb-8">
                 Integrate with more than{" "}
                 <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                   20+ platforms
@@ -382,62 +381,63 @@ export default function Landing() {
               </h3>
             </motion.div>
             
-            {/* Platform Grid */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="grid grid-cols-4 md:grid-cols-8 gap-4 mb-12"
-            >
-              {[
-                { icon: "fab fa-whatsapp", color: "text-green-400", name: "WhatsApp" },
-                { icon: "fab fa-instagram", color: "text-pink-400", name: "Instagram" },
-                { icon: "fab fa-facebook-messenger", color: "text-blue-400", name: "Messenger" },
-                { icon: "fas fa-chart-line", color: "text-orange-400", name: "Analytics" },
-                { icon: "fab fa-slack", color: "text-purple-400", name: "Slack" },
-                { icon: "fab fa-discord", color: "text-indigo-400", name: "Discord" },
-                { icon: "fab fa-microsoft", color: "text-blue-300", name: "Microsoft" },
-                { icon: "fab fa-google", color: "text-red-300", name: "Google" },
-                { icon: "fab fa-facebook", color: "text-blue-500", name: "Facebook" },
-                { icon: "fab fa-salesforce", color: "text-blue-600", name: "Salesforce" },
-                { icon: "fas fa-building", color: "text-red-400", name: "Zoho" },
-                { icon: "fas fa-headset", color: "text-green-500", name: "Support" },
-                { icon: "fab fa-telegram", color: "text-cyan-400", name: "Telegram" },
-                { icon: "fas fa-funnel-dollar", color: "text-purple-500", name: "CRM" },
-                { icon: "fas fa-ticket-alt", color: "text-teal-400", name: "Zendesk" },
-                { icon: "fas fa-phone", color: "text-primary", name: "Phone" }
-              ].map((platform, index) => (
-                <motion.div
-                  key={index}
-                  className="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm hover:bg-white/20 transition-all duration-300"
-                  whileHover={{ scale: 1.1 }}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: index * 0.05 }}
-                  viewport={{ once: true }}
-                >
-                  <i className={`${platform.icon} text-xl ${platform.color}`}></i>
-                </motion.div>
-              ))}
-            </motion.div>
+            {/* Moving Platform Icons */}
+            <div className="space-y-6 overflow-hidden mb-12">
+              {/* Top Row - Moving Right to Left */}
+              <motion.div 
+                className="flex gap-4 whitespace-nowrap"
+                animate={{ x: [0, -2000] }}
+                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+              >
+                {Array(3).fill(null).map((_, repeatIndex) => (
+                  [
+                    { icon: "fab fa-whatsapp", color: "text-green-400" },
+                    { icon: "fab fa-instagram", color: "text-pink-400" },
+                    { icon: "fab fa-facebook-messenger", color: "text-blue-400" },
+                    { icon: "fas fa-chart-line", color: "text-orange-400" },
+                    { icon: "fab fa-slack", color: "text-purple-400" },
+                    { icon: "fab fa-discord", color: "text-indigo-400" },
+                    { icon: "fab fa-microsoft", color: "text-blue-300" },
+                    { icon: "fab fa-google", color: "text-red-300" },
+                    { icon: "fab fa-facebook", color: "text-blue-500" },
+                    { icon: "fab fa-salesforce", color: "text-blue-600" }
+                  ].map((platform, index) => (
+                    <div key={`${repeatIndex}-${index}`} className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <i className={`${platform.icon} text-lg ${platform.color}`}></i>
+                    </div>
+                  ))
+                ))}
+              </motion.div>
+              
+              {/* Bottom Row - Moving Left to Right */}
+              <motion.div 
+                className="flex gap-4 whitespace-nowrap"
+                animate={{ x: [-2000, 0] }}
+                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+              >
+                {Array(3).fill(null).map((_, repeatIndex) => (
+                  [
+                    { icon: "fas fa-building", color: "text-red-400" },
+                    { icon: "fas fa-headset", color: "text-green-500" },
+                    { icon: "fab fa-telegram", color: "text-cyan-400" },
+                    { icon: "fas fa-funnel-dollar", color: "text-purple-500" },
+                    { icon: "fas fa-ticket-alt", color: "text-teal-400" },
+                    { icon: "fas fa-phone", color: "text-primary" },
+                    { icon: "fas fa-envelope", color: "text-secondary" },
+                    { icon: "fab fa-hubspot", color: "text-orange-500" },
+                    { icon: "fas fa-users", color: "text-cyan-300" },
+                    { icon: "fas fa-cog", color: "text-gray-400" }
+                  ].map((platform, index) => (
+                    <div key={`${repeatIndex}-${index}`} className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <i className={`${platform.icon} text-lg ${platform.color}`}></i>
+                    </div>
+                  ))
+                ))}
+              </motion.div>
+            </div>
           </div>
 
-          {/* Call to Action */}
-          <motion.div 
-            className="mt-16 text-center"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Try in minutes. Deploy in days.
-            </h3>
-            <p className="text-lg text-gray-300 max-w-2xl mx-auto">
-              Get started with NeuraVoice today and transform your business communications with intelligent voice agents.
-            </p>
-          </motion.div>
+
         </div>
       </section>
 
