@@ -150,7 +150,7 @@ export default function Landing() {
           >
             <Button
               onClick={() => {
-                window.location.href = "/assembly";
+                window.location.href = "/dashboard";
               }}
               className="bg-gradient-to-r from-primary to-secondary hover:from-primary/80 hover:to-secondary/80 text-white font-semibold px-8 py-4 text-lg rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-primary/25"
               size="lg"
