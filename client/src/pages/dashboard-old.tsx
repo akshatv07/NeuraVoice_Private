@@ -17,6 +17,7 @@ export default function Dashboard() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("Assembly");
   const [agentGoal, setAgentGoal] = useState("");
+  const [createdAgent, setCreatedAgent] = useState<{name: string, id: string} | null>(null);
 
   // Redirect if not authenticated
   if (!isAuthenticated) {
@@ -25,7 +26,7 @@ export default function Dashboard() {
   }
 
   // Fetch voice agents
-  const { data: voiceAgents = [], isLoading } = useQuery({
+  const { data: voiceAgents = [] as VoiceAgent[], isLoading } = useQuery<VoiceAgent[]>({
     queryKey: ["/api/voice-agents"],
     enabled: isAuthenticated,
   });
@@ -36,7 +37,8 @@ export default function Dashboard() {
       const response = await apiRequest("POST", "/api/voice-agents", data);
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      setCreatedAgent({ name: data.name, id: data.id });
       queryClient.invalidateQueries({ queryKey: ["/api/voice-agents"] });
       toast({
         title: "Success",
@@ -303,21 +305,62 @@ export default function Dashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
+              className="max-w-4xl mx-auto"
             >
-              <Card className="bg-white/5 backdrop-blur-sm border-white/10 max-w-2xl mx-auto">
-                <CardContent className="p-8 text-center">
-                  <i className="fas fa-microphone text-6xl text-primary mb-6"></i>
-                  <h3 className="text-2xl font-bold text-white mb-4">Voice Agent Testing</h3>
-                  <p className="text-gray-300 mb-8">
-                    Test your voice agent's responses and behavior in a controlled environment.
-                  </p>
-                  <Button
-                    className="bg-gradient-to-r from-primary to-secondary text-white px-8 py-4 text-lg"
-                    onClick={() => toast({ title: "Test Started", description: "Voice agent testing interface would be implemented here." })}
-                  >
-                    <i className="fas fa-play mr-2"></i>
-                    Start Test Session
-                  </Button>
+              <Card className="bg-white/5 backdrop-blur-sm border-white/10">
+                <CardContent className="p-8">
+                  {createdAgent || (voiceAgents && voiceAgents.length > 0) ? (
+                    <div className="text-center">
+                      <div className="flex items-center justify-center mb-6">
+                        <div className="w-24 h-24 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full flex items-center justify-center">
+                          <i className="fas fa-robot text-4xl text-primary"></i>
+                        </div>
+                      </div>
+                      <h3 className="text-2xl font-bold text-white mb-2">
+                        {createdAgent ? createdAgent.name : voiceAgents[0].name}
+                      </h3>
+                      <p className="text-gray-300 mb-8">
+                        {createdAgent 
+                          ? "Your voice assistant is ready for testing!" 
+                          : `Test your ${voiceAgents[0].name} voice assistant's responses and behavior.`}
+                      </p>
+                      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <Button
+                          className="bg-gradient-to-r from-primary to-secondary text-white px-8 py-4 text-lg hover:from-primary/90 hover:to-secondary/90 transition-all duration-300"
+                          onClick={() => toast({ 
+                            title: "Test Session Started", 
+                            description: `Testing ${createdAgent ? createdAgent.name : voiceAgents[0].name} voice assistant.` 
+                          })}
+                        >
+                          <i className="fas fa-play mr-2"></i>
+                          Start Test Session
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="border-white/20 text-gray-300 hover:text-white px-8 py-4 text-lg"
+                          onClick={() => setActiveTab("Assembly")}
+                        >
+                          <i className="fas fa-cog mr-2"></i>
+                          Configure Agent
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center">
+                      <i className="fas fa-microphone text-6xl text-gray-400 mb-6"></i>
+                      <h3 className="text-2xl font-bold text-white mb-2">No Voice Assistant Created</h3>
+                      <p className="text-gray-300 mb-8">
+                        Create your first voice assistant to get started with automated conversations.
+                      </p>
+                      <Button
+                        className="bg-gradient-to-r from-primary to-secondary text-white px-8 py-4 text-lg"
+                        onClick={() => setActiveTab("Assembly")}
+                      >
+                        <i className="fas fa-plus mr-2"></i>
+                        Create Voice Assistant
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
@@ -393,36 +436,86 @@ export default function Dashboard() {
               <i className="fas fa-spinner fa-spin text-2xl mb-2"></i>
               <p>Loading voice agents...</p>
             </div>
-          ) : voiceAgents.length > 0 && activeTab === "Assembly" ? (
+          ) : activeTab === "Assembly" ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               className="mt-8"
             >
-              <h3 className="text-xl font-bold text-white mb-4">Your Voice Agents</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {voiceAgents.map((agent: VoiceAgent) => (
-                  <Card key={agent.id} className="bg-white/5 backdrop-blur-sm border-white/10">
-                    <CardContent className="p-4">
-                      <h4 className="text-white font-semibold mb-2">{agent.name}</h4>
-                      <p className="text-gray-300 text-sm mb-3 line-clamp-2">{agent.goal}</p>
-                      <div className="flex justify-between items-center">
-                        <span className={`text-xs px-2 py-1 rounded ${
-                          agent.status === 'ready' ? 'bg-green-500/20 text-green-400' :
-                          agent.status === 'training' ? 'bg-yellow-500/20 text-yellow-400' :
-                          'bg-gray-500/20 text-gray-400'
-                        }`}>
-                          {agent.status}
-                        </span>
-                        <Button size="sm" variant="outline" className="border-white/20 text-gray-300 hover:text-white">
-                          Edit
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              <h3 className="text-xl font-bold text-white mb-4">
+                {voiceAgents.length > 0 ? 'Your Voice Agents' : 'Your Voice Assistant'}
+              </h3>
+              
+              {voiceAgents.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {voiceAgents.map((agent: VoiceAgent) => (
+                    <Card key={agent.id} className="bg-white/5 backdrop-blur-sm border-white/10">
+                      <CardContent className="p-4">
+                        <h4 className="text-white font-semibold mb-2">{agent.name}</h4>
+                        <p className="text-gray-300 text-sm mb-3 line-clamp-2">{agent.goal}</p>
+                        <div className="flex justify-between items-center">
+                          <span className={`text-xs px-2 py-1 rounded ${
+                            agent.status === 'ready' ? 'bg-green-500/20 text-green-400' :
+                            agent.status === 'training' ? 'bg-yellow-500/20 text-yellow-400' :
+                            'bg-gray-500/20 text-gray-400'
+                          }`}>
+                            {agent.status}
+                          </span>
+                          <div className="flex gap-2">
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="border-white/20 text-gray-300 hover:text-white"
+                              onClick={() => setActiveTab("Test")}
+                            >
+                              <i className="fas fa-play mr-1"></i>
+                              Test
+                            </Button>
+                            <Button size="sm" variant="outline" className="border-white/20 text-gray-300 hover:text-white">
+                              Edit
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : createdAgent ? (
+                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-8 text-center">
+                  <i className="fas fa-robot text-6xl text-green-400 mb-4"></i>
+                  <h3 className="text-2xl font-semibold text-white mb-2">{createdAgent.name}</h3>
+                  <p className="text-gray-400 mb-6">Your voice assistant is ready to test!</p>
+                  <div className="flex justify-center gap-4">
+                    <Button
+                      onClick={() => setActiveTab("Test")}
+                      className="bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700"
+                    >
+                      <i className="fas fa-play mr-2"></i>
+                      Test Now
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="border-white/20 text-gray-300 hover:text-white"
+                    >
+                      <i className="fas fa-cog mr-2"></i>
+                      Configure
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-white/5 backdrop-blur-sm border border-dashed border-white/20 rounded-lg p-8 text-center">
+                  <i className="fas fa-robot text-6xl text-gray-400 mb-4"></i>
+                  <h3 className="text-2xl font-semibold text-white mb-2">No Voice Assistants Yet</h3>
+                  <p className="text-gray-400 mb-6">Create your first voice assistant to get started</p>
+                  <Button
+                    className="bg-gradient-to-r from-primary to-secondary text-white hover:from-primary/80 hover:to-secondary/80"
+                  >
+                    <i className="fas fa-plus mr-2"></i>
+                    Create Voice Assistant
+                  </Button>
+                </div>
+              )}
             </motion.div>
           ) : null}
         </div>

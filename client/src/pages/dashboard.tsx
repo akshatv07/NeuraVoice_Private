@@ -38,7 +38,7 @@ export default function Dashboard() {
   const [activeSection, setActiveSection] = useState("playground");
   const [showCreateBot, setShowCreateBot] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState("neurava");
-  const [selectedModel, setSelectedModel] = useState("");
+  const [selectedModel, setSelectedModel] = useState("neura_vn1");
   const [selectedPersona, setSelectedPersona] = useState("");
   const [selectedSample, setSelectedSample] = useState("");
   const [botName, setBotName] = useState("");
@@ -48,6 +48,8 @@ export default function Dashboard() {
   const [showCongrats, setShowCongrats] = useState(false);
   const [isTestMode, setIsTestMode] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [createdAssistant, setCreatedAssistant] = useState<{name: string, id: string} | null>(null);
+  const [selectedAssistant, setSelectedAssistant] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,7 +103,7 @@ export default function Dashboard() {
       language: "Hindi",
       tone: "Assertive",
       style: "Persuasive",
-      image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=faces&q=80",
+      image: "/voice-samples/image (3).jpg",  // Professional Indian male with assertive look
       voiceSample: "/voice-samples/audio_1.wav"
     },
     { 
@@ -111,7 +113,7 @@ export default function Dashboard() {
       language: "Hindi",
       tone: "Reassuring",
       style: "Empathetic",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=faces&q=80",
+      image: "/voice-samples/monika.jpg",  // Professional Indian female with calm demeanor
       voiceSample: "/voice-samples/audio_2.wav"
     },
     { 
@@ -121,7 +123,7 @@ export default function Dashboard() {
       language: "English",
       tone: "Confident",
       style: "Professional",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=faces&q=80",
+      image: "/voice-samples/Vikram.jpg",  // Confident Indian business professional
       voiceSample: "/voice-samples/audio_3.wav"
     },
     { 
@@ -131,7 +133,7 @@ export default function Dashboard() {
       language: "English",
       tone: "Polite",
       style: "Friendly",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces&q=80",
+      image: "/voice-samples/Raju.jpg",  // Friendly Indian professional with approachable look
       voiceSample: "/voice-samples/audio_4.wav"
     },
     { 
@@ -141,12 +143,18 @@ export default function Dashboard() {
       language: "Custom",
       tone: "Custom",
       style: "Custom",
-      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&h=200&fit=crop&crop=faces&q=80"
+      image: ""
     }
   ];
 
   const handleSubmit = () => {
     if (botName && selectedGoal && selectedModel && selectedPersona) {
+      const newAssistant = { 
+        id: `bot-${Date.now()}`,
+        name: botName 
+      };
+      setCreatedAssistant(newAssistant);
+      setSelectedAssistant(newAssistant.id);
       setShowCreateBot(false);
       setShowCongrats(true);
       setTimeout(() => setShowCongrats(false), 4000);
@@ -165,6 +173,36 @@ export default function Dashboard() {
           Create Voice Assistant
         </Button>
       </div>
+
+      {createdAssistant ? (
+        <Card className="bg-white/10 border-white/20">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-semibold text-white">{createdAssistant.name}</h3>
+                <p className="text-gray-300">Your voice assistant is ready to use</p>
+              </div>
+              <Button 
+                className="bg-green-500 hover:bg-green-600 text-white"
+                onClick={() => setActiveSection('test')}
+              >
+                <Play className="w-4 h-4 mr-2" />
+                Test Now
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="bg-white/10 border-2 border-dashed border-white/20">
+          <CardContent className="p-8 text-center">
+            <div className="flex flex-col items-center">
+              <Volume2 className="w-12 h-12 text-gray-400 mb-4" />
+              <h3 className="text-xl font-semibold text-white mb-2">No Voice Assistants Yet</h3>
+              <p className="text-gray-400">Click the 'Create Voice Assistant' button above to get started</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Create Bot Dialog */}
       <Dialog open={showCreateBot} onOpenChange={setShowCreateBot}>
@@ -410,6 +448,7 @@ export default function Dashboard() {
                     }`}
                   >
                     <div className="text-center space-y-3">
+                      {persona.id !== 'custom' ? (
                       <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden border-2 border-white/20">
                         <img 
                           src={persona.image} 
@@ -417,11 +456,20 @@ export default function Dashboard() {
                           className="w-full h-full object-cover"
                         />
                       </div>
+                    ) : (
+                      <div className="w-16 h-16 mx-auto mb-2 rounded-full border-2 border-dashed border-white/20 flex items-center justify-center">
+                        <User className="w-6 h-6 text-gray-400" />
+                      </div>
+                    )}
                       <div className="space-y-1">
                         <p className="font-bold text-sm text-primary">{persona.name}</p>
-                        <p className="text-xs font-medium text-gray-300">Tone: {persona.tone || 'Neutral'}</p>
-                        <p className="text-xs text-gray-400">{persona.gender} • {persona.language}</p>
-                        <p className="text-xs text-gray-400">{persona.style || 'Conversational'}</p>
+                        {persona.id !== 'custom' && (
+                          <>
+                            <p className="text-xs font-medium text-gray-300">Tone: {persona.tone || 'Neutral'}</p>
+                            <p className="text-xs text-gray-400">{persona.gender} • {persona.language}</p>
+                            <p className="text-xs text-gray-400">{persona.style || 'Conversational'}</p>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -507,17 +555,6 @@ export default function Dashboard() {
           </motion.div>
         </DialogContent>
       </Dialog>
-
-      {/* Empty State */}
-      <Card className="bg-white/5 border-white/10 border-dashed">
-        <CardContent className="flex flex-col items-center justify-center py-16">
-          <Play className="w-16 h-16 text-gray-400 mb-4" />
-          <h3 className="text-xl font-semibold text-white mb-2">No Voice Assistants Yet</h3>
-          <p className="text-gray-400 text-center mb-6">
-            Create your first voice assistant to get started with automated conversations.
-          </p>
-        </CardContent>
-      </Card>
     </div>
   );
 
@@ -525,43 +562,49 @@ export default function Dashboard() {
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-white">Test Voice Assistant</h1>
       
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-md mx-auto">
         <Card className="bg-white/10 border-white/20">
-          <CardContent className="p-8 text-center space-y-6">
+          <CardContent className="p-12 text-center space-y-8">
             {!isTestMode ? (
-              <>
+              <div className="space-y-8">
                 <motion.div
-                  className="w-32 h-32 mx-auto bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center cursor-pointer"
+                  className="w-40 h-40 mx-auto bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center cursor-pointer"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setIsTestMode(true)}
                 >
-                  <Phone className="w-16 h-16 text-white" />
+                  <Phone className="w-20 h-20 text-white" />
                 </motion.div>
-                <div>
-                  <h3 className="text-2xl font-semibold text-white mb-2">Talk</h3>
-                  <p className="text-gray-300">Click to start a test conversation</p>
-                </div>
-                <div className="max-w-xs mx-auto">
-                  <Label>Select Assistant</Label>
-                  <Select>
-                    <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                      <SelectValue placeholder="Choose assistant..." />
+                <div className="space-y-4 w-full max-w-xs mx-auto">
+                  <div className="space-y-2">
+                    <h3 className="text-2xl font-semibold text-white">Talk</h3>
+                    <p className="text-gray-300">Click to start a test conversation</p>
+                  </div>
+                  <Select 
+                    value={selectedAssistant}
+                    onValueChange={setSelectedAssistant}
+                  >
+                    <SelectTrigger className="bg-white/10 border-white/20 text-white w-full">
+                      <SelectValue placeholder="No assistants available" />
                     </SelectTrigger>
                     <SelectContent className="bg-dark-navy border-white/20">
-                      <SelectItem value="test-bot">Test Bot</SelectItem>
+                      {createdAssistant && (
+                        <SelectItem value={createdAssistant.id}>
+                          {createdAssistant.name}
+                        </SelectItem>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
-              </>
+              </div>
             ) : (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="space-y-6"
+                className="space-y-8"
               >
                 <motion.div
-                  className="w-32 h-32 mx-auto bg-gradient-to-r from-green-400 to-green-600 rounded-full flex items-center justify-center"
+                  className="w-40 h-40 mx-auto bg-gradient-to-r from-green-400 to-green-600 rounded-full flex items-center justify-center"
                   animate={{ 
                     scale: [1, 1.1, 1],
                     rotate: [0, 5, -5, 0]
@@ -572,16 +615,16 @@ export default function Dashboard() {
                     ease: "easeInOut"
                   }}
                 >
-                  <Volume2 className="w-16 h-16 text-white" />
+                  <Volume2 className="w-20 h-20 text-white" />
                 </motion.div>
-                <div>
-                  <h3 className="text-2xl font-semibold text-white mb-2">Call in Progress</h3>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-semibold text-white">Call in Progress</h3>
                   <p className="text-gray-300">Speaking with your voice assistant...</p>
                 </div>
                 <Button 
                   onClick={() => setIsTestMode(false)}
                   variant="outline"
-                  className="border-red-500/50 text-red-400 hover:bg-red-500/10"
+                  className="border-white/20 text-white hover:bg-white/10"
                 >
                   End Call
                 </Button>
@@ -691,11 +734,48 @@ export default function Dashboard() {
     </div>
   );
 
+  const renderIntegrations = () => (
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold text-white">Integrations</h1>
+      <Card className="bg-white/10 border-white/20">
+        <CardContent className="p-8">
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <h2 className="text-xl font-semibold text-white">Connect Your Services</h2>
+              <p className="text-gray-300">Enhance your voice assistant by connecting with third-party services.</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card className="bg-white/5 border-white/10 hover:border-primary/50 transition-colors">
+                <CardContent className="p-6 flex flex-col items-center text-center">
+                  <div className="w-16 h-16 bg-blue-100/10 rounded-full flex items-center justify-center mb-4">
+                    <Phone className="w-8 h-8 text-blue-400" />
+                  </div>
+                  <h3 className="text-lg font-medium text-white mb-2">Twilio</h3>
+                  <p className="text-sm text-gray-300 mb-4">Make and receive phone calls with your voice assistant</p>
+                  <Button 
+                    onClick={() => window.open('https://www.twilio.com/en-us', '_blank')}
+                    className="bg-blue-600 hover:bg-blue-700 text-white w-full"
+                  >
+                    Connect with Twilio
+                  </Button>
+                </CardContent>
+              </Card>
+              
+              {/* Add more integration cards here */}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
   const renderContent = () => {
     switch (activeSection) {
       case "playground": return renderPlayground();
       case "test": return renderTest();
       case "analytics": return renderAnalytics();
+      case "integrations": return renderIntegrations();
       case "profile": return renderProfile();
       default: return renderPlayground();
     }
