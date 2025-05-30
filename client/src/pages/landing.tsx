@@ -3,10 +3,89 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
+import { useState, useRef, useEffect } from "react";
 
 export default function Landing() {
   const { isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    // Initialize audio element with correct path
+    audioRef.current = new Audio('/voice-samples/Conversation_for_Homepage.pdf.mp3');
+    
+    // Enable preloading
+    audioRef.current.preload = 'auto';
+    
+    // Handle audio metadata loading
+    const handleLoadedMetadata = () => {
+      console.log('Audio metadata loaded, duration:', audioRef.current?.duration);
+    };
+    
+    // Handle audio errors
+    const handleError = (e: Event) => {
+      console.error('Audio error:', e);
+      setIsPlaying(false);
+    };
+    
+    audioRef.current.addEventListener('loadedmetadata', handleLoadedMetadata);
+    audioRef.current.addEventListener('error', handleError);
+    
+    // Cleanup on unmount
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.removeEventListener('loadedmetadata', handleLoadedMetadata);
+        audioRef.current.removeEventListener('error', handleError);
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  const handleAudioPlay = async () => {
+    if (!audioRef.current) {
+      console.error('Audio element not initialized');
+      return;
+    }
+    
+    try {
+      if (isPlaying) {
+        // Stop and reset audio
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        setIsPlaying(false);
+      } else {
+        // Play audio
+        await audioRef.current.play();
+        setIsPlaying(true);
+      }
+    } catch (error) {
+      console.error('Audio playback error:', error);
+      // Try to load the audio again if it fails
+      try {
+        audioRef.current.load();
+        await audioRef.current.play();
+        setIsPlaying(true);
+      } catch (retryError) {
+        console.error('Failed to retry audio playback:', retryError);
+        setIsPlaying(false);
+      }
+    }
+  };
+  
+  // Handle audio ended event
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    
+    const handleEnded = () => setIsPlaying(false);
+    audio.addEventListener('ended', handleEnded);
+    
+    return () => {
+      audio.removeEventListener('ended', handleEnded);
+    };
+  }, []);
 
   const handleLogin = () => {
     window.location.href = "/api/login";
@@ -491,10 +570,22 @@ export default function Landing() {
                       </div>
                     </div>
                     <div className="relative">
-                      <div className="w-full h-80 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl flex items-center justify-center border border-white/10">
+                      <div 
+                        className={`w-full h-80 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl flex items-center justify-center border ${isPlaying ? 'border-primary/50 ring-2 ring-primary/30' : 'border-white/10'} transition-all duration-300 cursor-pointer hover:border-primary/50 hover:ring-2 hover:ring-primary/30`}
+                        onClick={handleAudioPlay}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => e.key === 'Enter' && handleAudioPlay()}
+                      >
                         <div className="text-center">
-                          <i className="fas fa-microphone text-6xl text-primary mb-4"></i>
-                          <p className="text-gray-300">Voice AI Interface</p>
+                          {isPlaying ? (
+                            <i className="fas fa-stop text-6xl text-primary mb-4"></i>
+                          ) : (
+                            <i className="fas fa-play text-6xl text-primary mb-4"></i>
+                          )}
+                          <p className="text-gray-300">
+                            {isPlaying ? 'Stop Sample' : 'Play Voice Sample'}
+                          </p>
                         </div>
                       </div>
                     </div>
