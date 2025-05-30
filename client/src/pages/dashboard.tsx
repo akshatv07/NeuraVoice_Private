@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Settings, 
   BarChart3, 
@@ -31,6 +32,7 @@ import {
   Shield,
   Sparkles
 } from "lucide-react";
+// Using img tag directly for Vite compatibility
 
 export default function Dashboard() {
   const [activeSection, setActiveSection] = useState("playground");
@@ -38,15 +40,36 @@ export default function Dashboard() {
   const [selectedProvider, setSelectedProvider] = useState("neurava");
   const [selectedModel, setSelectedModel] = useState("");
   const [selectedPersona, setSelectedPersona] = useState("");
+  const [selectedSample, setSelectedSample] = useState("");
   const [botName, setBotName] = useState("");
   const [selectedGoal, setSelectedGoal] = useState("");
+  const [selectedDomain, setSelectedDomain] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("");
   const [showCongrats, setShowCongrats] = useState(false);
   const [isTestMode, setIsTestMode] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const files = Array.from(event.target.files);
+      setSelectedFiles(prevFiles => [...prevFiles, ...files]);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+  };
 
   const sidebarItems = [
     { id: "playground", label: "Playground", icon: Play },
     { id: "test", label: "Test", icon: TestTube },
     { id: "analytics", label: "Analytics", icon: BarChart3 },
+    { id: "integrations", label: "Integrations", icon: Link },
     { id: "profile", label: "Profile", icon: Settings },
   ];
 
@@ -71,11 +94,55 @@ export default function Dashboard() {
   ];
 
   const personas = [
-    { id: "aggressive", name: "Aggressive Aryanveer", gender: "Male", language: "Hindi" },
-    { id: "calm", name: "Calm and Reassuring Monika", gender: "Female", language: "Hindi" },
-    { id: "confident", name: "Confident Vikram", gender: "Male", language: "Hindi" },
-    { id: "polite", name: "Polite Raju", gender: "Male", language: "English" },
-    { id: "custom", name: "Custom Persona", gender: "Custom", language: "Custom" }
+    { 
+      id: "aggressive", 
+      name: "Aryanveer", 
+      gender: "Male", 
+      language: "Hindi",
+      tone: "Assertive",
+      style: "Persuasive",
+      image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=faces&q=80",
+      voiceSample: "/voice-samples/audio_1.wav"
+    },
+    { 
+      id: "calm", 
+      name: "Monika", 
+      gender: "Female", 
+      language: "Hindi",
+      tone: "Reassuring",
+      style: "Empathetic",
+      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=faces&q=80",
+      voiceSample: "/voice-samples/audio_2.wav"
+    },
+    { 
+      id: "confident", 
+      name: "Vikram", 
+      gender: "Male", 
+      language: "English",
+      tone: "Confident",
+      style: "Professional",
+      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=faces&q=80",
+      voiceSample: "/voice-samples/audio_3.wav"
+    },
+    { 
+      id: "polite", 
+      name: "Raju", 
+      gender: "Male", 
+      language: "English",
+      tone: "Polite",
+      style: "Friendly",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces&q=80",
+      voiceSample: "/voice-samples/audio_4.wav"
+    },
+    { 
+      id: "custom", 
+      name: "Custom", 
+      gender: "Custom", 
+      language: "Custom",
+      tone: "Custom",
+      style: "Custom",
+      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&h=200&fit=crop&crop=faces&q=80"
+    }
   ];
 
   const handleSubmit = () => {
@@ -95,13 +162,13 @@ export default function Dashboard() {
           className="bg-gradient-to-r from-primary to-secondary hover:scale-105 transition-transform"
         >
           <Play className="w-4 h-4 mr-2" />
-          Create New Bot
+          Create Voice Assistant
         </Button>
       </div>
 
       {/* Create Bot Dialog */}
       <Dialog open={showCreateBot} onOpenChange={setShowCreateBot}>
-        <DialogContent className="max-w-4xl bg-dark-navy/95 border-white/20 text-white max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl bg-dark-navy border-2 border-primary/50 shadow-lg shadow-primary/20 text-white max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-center">Create Your Voice Assistant</DialogTitle>
           </DialogHeader>
@@ -112,7 +179,7 @@ export default function Dashboard() {
               <Label className="text-lg font-semibold">Basic Configuration</Label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="botName">Name your bot</Label>
+                  <Label htmlFor="botName" className="mb-2 block">Voice Assistant Name</Label>
                   <Input 
                     id="botName"
                     value={botName}
@@ -122,7 +189,35 @@ export default function Dashboard() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="goal">Select goal</Label>
+                  <Label>Domain</Label>
+                  <Select value={selectedDomain} onValueChange={setSelectedDomain}>
+                    <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                      <SelectValue placeholder="Select domain..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-dark-navy border-white/20">
+                      <SelectItem value="fintech">FinTech</SelectItem>
+                      <SelectItem value="banking">Banking</SelectItem>
+                      <SelectItem value="healthcare">Healthcare</SelectItem>
+                      <SelectItem value="hospitality">Hospitality</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Department</Label>
+                  <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+                    <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                      <SelectValue placeholder="Select department..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-dark-navy border-white/20">
+                      <SelectItem value="sales">Sales</SelectItem>
+                      <SelectItem value="marketing">Marketing</SelectItem>
+                      <SelectItem value="finance">Finance</SelectItem>
+                      <SelectItem value="hr">Human Resource</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Select Goal</Label>
                   <Select value={selectedGoal} onValueChange={setSelectedGoal}>
                     <SelectTrigger className="bg-white/10 border-white/20 text-white">
                       <SelectValue placeholder="Choose a goal..." />
@@ -191,44 +286,81 @@ export default function Dashboard() {
 
             <Separator className="bg-white/20" />
 
-            {/* Knowledge Base */}
+            {/* Information Center */}
             <div className="space-y-4">
               <Label className="text-lg font-semibold flex items-center">
                 <FileText className="w-5 h-5 mr-2" />
-                Knowledge Base
+                Information Center
               </Label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-3">
-                  <Label>Upload Files</Label>
+              
+              <Tabs defaultValue="files" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 bg-dark-navy border border-white/20">
+                  <TabsTrigger 
+                    value="files" 
+                    className="data-[state=active]:bg-primary/20 data-[state=active]:text-white data-[state=active]:shadow-sm"
+                  >
+                    Upload Files
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="url" 
+                    className="data-[state=active]:bg-primary/20 data-[state=active]:text-white data-[state=active]:shadow-sm"
+                  >
+                    Add URL
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="files" className="mt-4">
                   <div className="border-2 border-dashed border-white/20 rounded-lg p-6 text-center">
                     <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                    <p className="text-sm text-gray-400">Drag & drop .txt or .pdf files</p>
-                    <Button variant="outline" className="mt-2 border-white/20">
+                    <p className="text-sm text-gray-400 mb-4">Drag & drop .txt or .pdf files (no .docx)</p>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      className="hidden"
+                      accept=".pdf,.txt"
+                      multiple
+                    />
+                    <Button 
+                      variant="outline" 
+                      className="border-white/20 mb-4"
+                      onClick={triggerFileInput}
+                    >
                       Browse Files
                     </Button>
+                    {selectedFiles.length > 0 && (
+                      <div className="mt-4 space-y-2 text-left">
+                        <p className="text-sm font-medium text-gray-300">Selected Files:</p>
+                        <div className="space-y-2 max-h-40 overflow-y-auto">
+                          {selectedFiles.map((file, index) => (
+                            <div key={index} className="flex items-center justify-between bg-white/5 p-2 rounded">
+                              <span className="text-sm text-gray-300 truncate max-w-xs">{file.name}</span>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="text-red-400 hover:text-red-300 h-6 w-6 p-0"
+                                onClick={() => removeFile(index)}
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-                <div className="space-y-3">
-                  <Label>Add URL</Label>
-                  <Input 
-                    placeholder="https://example.com"
-                    className="bg-white/10 border-white/20 text-white"
-                  />
-                  <div className="flex items-center space-x-2">
-                    <Button variant="outline" size="sm" className="border-white/20">
-                      <FolderPlus className="w-4 h-4 mr-1" />
-                      Create Folder
-                    </Button>
-                    <Button variant="outline" size="sm" className="border-red-500/50 text-red-400">
-                      <Trash2 className="w-4 h-4 mr-1" />
-                      Delete
-                    </Button>
+                </TabsContent>
+                
+                <TabsContent value="url" className="mt-4">
+                  <div className="space-y-3">
+                    <Input 
+                      placeholder="https://example.com"
+                      className="bg-white/10 border-white/20 text-white"
+                    />
                   </div>
-                </div>
-              </div>
+                </TabsContent>
+              </Tabs>
             </div>
-
-            <Separator className="bg-white/20" />
 
             {/* Voice Configuration */}
             <div className="space-y-4">
@@ -240,19 +372,56 @@ export default function Dashboard() {
                 {personas.map(persona => (
                   <div 
                     key={persona.id}
-                    onClick={() => setSelectedPersona(persona.id)}
+                    onClick={() => {
+                      setSelectedPersona(persona.id);
+                      
+                      // Only play if voice sample exists
+                      if (persona.voiceSample) {
+                        console.log('Attempting to play:', persona.voiceSample);
+                        const audio = new Audio(persona.voiceSample);
+                        
+                        // Add event listeners for debugging
+                        audio.onerror = (e) => {
+                          console.error('Audio error:', e);
+                          console.error('Audio error details:', audio.error);
+                        };
+                        
+                        audio.oncanplay = () => {
+                          console.log('Audio can play');
+                        };
+                        
+                        audio.play().catch(error => {
+                          console.error('Error playing voice sample:', error);
+                          console.error('Audio element state:', {
+                            readyState: audio.readyState,
+                            error: audio.error,
+                            networkState: audio.networkState,
+                            src: audio.src
+                          });
+                        });
+                      } else {
+                        console.log('No voice sample for persona:', persona.name);
+                      }
+                    }}
                     className={`p-4 rounded-lg border cursor-pointer transition-all ${
                       selectedPersona === persona.id 
                         ? 'border-primary bg-primary/20' 
                         : 'border-white/20 bg-white/5 hover:bg-white/10'
                     }`}
                   >
-                    <div className="text-center space-y-2">
-                      <User className="w-8 h-8 mx-auto" />
-                      <div>
-                        <p className="font-semibold text-sm">{persona.name}</p>
-                        <p className="text-xs text-gray-400">{persona.gender}</p>
-                        <p className="text-xs text-gray-400">{persona.language}</p>
+                    <div className="text-center space-y-3">
+                      <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden border-2 border-white/20">
+                        <img 
+                          src={persona.image} 
+                          alt={persona.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-bold text-sm text-primary">{persona.name}</p>
+                        <p className="text-xs font-medium text-gray-300">Tone: {persona.tone || 'Neutral'}</p>
+                        <p className="text-xs text-gray-400">{persona.gender} • {persona.language}</p>
+                        <p className="text-xs text-gray-400">{persona.style || 'Conversational'}</p>
                       </div>
                     </div>
                   </div>
@@ -274,9 +443,9 @@ export default function Dashboard() {
                       <SelectValue placeholder="Select background..." />
                     </SelectTrigger>
                     <SelectContent className="bg-dark-navy border-white/20">
-                      <SelectItem value="office">Office Sound</SelectItem>
-                      <SelectItem value="nature">Nature Sound</SelectItem>
-                      <SelectItem value="agency">Collection Agency Sound</SelectItem>
+                      <SelectItem value="office">Office Noise</SelectItem>
+                      <SelectItem value="reception">Reception Noise</SelectItem>
+                      <SelectItem value="conference">Conference Noise</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -480,8 +649,8 @@ export default function Dashboard() {
 
   const renderProfile = () => (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-white">Profile Settings</h1>
-      <Card className="bg-white/10 border-white/20 max-w-2xl">
+      <h1 className="text-3xl font-bold text-white text-center">Profile Settings</h1>
+      <Card className="bg-white/10 border-white/20 max-w-2xl w-full mx-auto">
         <CardContent className="p-8">
           <div className="space-y-6">
             <div className="flex items-center space-x-4">

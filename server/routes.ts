@@ -1,7 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+// Use mock authentication for now
+import { setupAuth, isAuthenticated } from './mockAuth';
 import { insertVoiceAgentSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -12,8 +13,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = process.env.NODE_ENV === 'production' ? req.user.claims.sub : req.user.id;
       const user = await storage.getUser(userId);
+      if (!user && process.env.NODE_ENV !== 'production') {
+        // In development, return the mock user if not found in DB
+        return res.json(req.user);
+      }
       res.json(user);
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -24,7 +29,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Voice agents routes
   app.get("/api/voice-agents", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = process.env.NODE_ENV === 'production' ? req.user.claims.sub : req.user.id;
       const agents = await storage.getVoiceAgentsByUser(userId);
       res.json(agents);
     } catch (error) {
@@ -35,7 +40,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/voice-agents", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = process.env.NODE_ENV === 'production' ? req.user.claims.sub : req.user.id;
       const validatedData = insertVoiceAgentSchema.parse({
         ...req.body,
         userId,

@@ -22,7 +22,7 @@ const getOidcConfig = memoize(
   { maxAge: 3600 * 1000 }
 );
 
-export function getSession() {
+export const getSession = () => {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
   const pgStore = connectPg(session);
   const sessionStore = new pgStore({
@@ -44,19 +44,19 @@ export function getSession() {
   });
 }
 
-function updateUserSession(
+export const updateUserSession = (
   user: any,
   tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers
-) {
+) => {
   user.claims = tokens.claims();
   user.access_token = tokens.access_token;
   user.refresh_token = tokens.refresh_token;
   user.expires_at = user.claims?.exp;
 }
 
-async function upsertUser(
+export const upsertUser = async (
   claims: any,
-) {
+) => {
   await storage.upsertUser({
     id: claims["sub"],
     email: claims["email"],
@@ -66,7 +66,7 @@ async function upsertUser(
   });
 }
 
-export async function setupAuth(app: Express) {
+export const setupAuth = async (app: Express) => {
   app.set("trust proxy", 1);
   app.use(getSession());
   app.use(passport.initialize());

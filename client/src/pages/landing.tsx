@@ -21,8 +21,8 @@ export default function Landing() {
   };
 
   const handleTalkToLenden = () => {
-    // Placeholder for LiveKit integration
-    alert("LiveKit integration would be implemented here for voice demo");
+    // Redirect to LiveKit demo
+    window.location.href = "https://interoperable-module-1cwqi3.sandbox.livekit.io/";
   };
 
   const scrollToSection = (sectionId: string) => {
