@@ -184,7 +184,7 @@ export default function Dashboard() {
                     id="botName"
                     value={botName}
                     onChange={(e) => setBotName(e.target.value)}
-                    placeholder="Enter bot name..."
+                    placeholder="Enter assistant name"
                     className="bg-white/10 border-white/20 text-white"
                   />
                 </div>
@@ -438,11 +438,12 @@ export default function Dashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div>
                   <Label>Background Sound</Label>
-                  <Select>
+                  <Select defaultValue="none">
                     <SelectTrigger className="bg-white/10 border-white/20 text-white">
                       <SelectValue placeholder="Select background..." />
                     </SelectTrigger>
                     <SelectContent className="bg-dark-navy border-white/20">
+                      <SelectItem value="none">None</SelectItem>
                       <SelectItem value="office">Office Noise</SelectItem>
                       <SelectItem value="reception">Reception Noise</SelectItem>
                       <SelectItem value="conference">Conference Noise</SelectItem>
