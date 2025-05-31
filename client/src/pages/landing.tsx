@@ -382,8 +382,8 @@ export default function Landing() {
               },
               {
                 icon: "fas fa-bolt",
-                title: "Real-Time Processing",
-                description: "Ultra-low latency for seamless, natural conversations",
+                title: "Near Real-Time Processing",
+                description: "Ultra-low latency for seamless, natural conversations.",
                 gradient: "from-coral to-primary"
               },
               {
@@ -521,8 +521,11 @@ export default function Landing() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-24 relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-dark-navy/90 to-midnight/90"></div>
+      <section id="about" className={`py-24 relative transition-all duration-1000 ${isPlaying ? 'bg-gradient-to-br from-primary/5 via-midnight/70 to-accent/5' : ''}`}>
+        <div className={`absolute inset-0 transition-all duration-1000 ${isPlaying ? 'opacity-100' : 'opacity-0'}`}>
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-midnight/10 to-accent/5"></div>
+        </div>
+        <div className={`absolute inset-0 transition-all duration-1000 ${isPlaying ? 'opacity-0' : 'opacity-100 bg-gradient-to-r from-dark-navy/90 to-midnight/90'}`}></div>
         
         <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-4xl mx-auto">
@@ -544,7 +547,7 @@ export default function Landing() {
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              <Card className="bg-white/5 backdrop-blur-lg border-white/10">
+              <Card className={`bg-white/5 backdrop-blur-lg transition-all duration-500 ${isPlaying ? 'border-primary/30' : 'border-white/10'} shadow-xl`}>
                 <CardContent className="p-8 md:p-12">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                     <div className="space-y-6">
@@ -571,22 +574,45 @@ export default function Landing() {
                     </div>
                     <div className="relative">
                       <div 
-                        className={`w-full h-80 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl flex items-center justify-center border ${isPlaying ? 'border-primary/50 ring-2 ring-primary/30' : 'border-white/10'} transition-all duration-300 cursor-pointer hover:border-primary/50 hover:ring-2 hover:ring-primary/30`}
+                        className={`w-full h-80 bg-gradient-to-br from-dark-navy/90 to-midnight/90 rounded-2xl flex items-center justify-center border-2 ${isPlaying ? 'border-primary/50 shadow-2xl shadow-primary/30' : 'border-white/10 hover:border-primary/50'} transition-all duration-500 cursor-pointer overflow-hidden backdrop-blur-sm`}
                         onClick={handleAudioPlay}
                         role="button"
                         tabIndex={0}
                         onKeyDown={(e) => e.key === 'Enter' && handleAudioPlay()}
                       >
-                        <div className="text-center">
-                          {isPlaying ? (
-                            <i className="fas fa-stop text-6xl text-primary mb-4"></i>
-                          ) : (
-                            <i className="fas fa-play text-6xl text-primary mb-4"></i>
-                          )}
-                          <p className="text-gray-300">
-                            {isPlaying ? 'Stop Sample' : 'Play Voice Sample'}
+                        <div className="relative z-10 text-center p-8">
+                          <div className={`w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-6 transition-all duration-300 ${isPlaying ? 'bg-primary/20 scale-110' : 'bg-primary/10'}`}>
+                            {isPlaying ? (
+                              <div className="flex items-end h-12 gap-1">
+                                {[1, 2, 3, 2, 1].map((height, i) => (
+                                  <motion.div
+                                    key={i}
+                                    className="w-2 bg-primary rounded-full"
+                                    animate={isPlaying ? {
+                                      height: `${Math.random() * 40 + 10}px`,
+                                      opacity: 0.7 + Math.random() * 0.3
+                                    } : { height: '10px' }}
+                                    transition={{
+                                      duration: 0.5,
+                                      repeat: Infinity,
+                                      repeatType: 'reverse'
+                                    }}
+                                    style={{ height: '10px' }}
+                                  />
+                                ))}
+                              </div>
+                            ) : (
+                              <i className="fas fa-play text-3xl text-primary"></i>
+                            )}
+                          </div>
+                          <p className={`text-lg font-medium transition-all duration-300 ${isPlaying ? 'text-white bg-primary/10 px-4 py-2 rounded-lg border border-primary/30' : 'text-gray-300'}`}>
+                            {isPlaying ? 'Listening... Click to stop' : 'Play Voice Sample'}
                           </p>
+                          {isPlaying && (
+                            <p className="text-sm text-gray-400 mt-2"></p>
+                          )}
                         </div>
+                        {/* Background removed as per request */}
                       </div>
                     </div>
                   </div>

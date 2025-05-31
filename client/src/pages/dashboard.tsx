@@ -30,7 +30,8 @@ import {
   User,
   Mail,
   Shield,
-  Sparkles
+  Sparkles,
+  CheckCircle
 } from "lucide-react";
 // Using img tag directly for Vite compatibility
 
@@ -50,7 +51,53 @@ export default function Dashboard() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [createdAssistant, setCreatedAssistant] = useState<{name: string, id: string} | null>(null);
   const [selectedAssistant, setSelectedAssistant] = useState<string>("");
+  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
+  const [customPrompt, setCustomPrompt] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
+  const [showCustomPrompt, setShowCustomPrompt] = useState<boolean>(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleSubmitCustomPrompt = () => {
+    if (!customPrompt.trim()) return;
+    
+    setIsSubmitting(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSubmitSuccess(true);
+      setShowCustomPrompt(false);
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setSubmitSuccess(false);
+      }, 3000);
+    }, 1000);
+  };
+
+  const promptTemplates = [
+    {
+      title: "Friendly Assistant",
+      description: "Warm and approachable tone for customer service",
+      content: "You are a friendly and helpful assistant. Speak in a warm, approachable tone. Be patient and understanding with users. Keep responses concise and to the point while maintaining a professional yet friendly demeanor."
+    },
+    {
+      title: "Professional Expert",
+      description: "Knowledgeable and authoritative tone for expert advice",
+      content: "You are a professional expert in your field. Speak with confidence and authority. Provide clear, accurate information and be precise in your responses. Maintain a formal but not overly rigid tone."
+    },
+    {
+      title: "Enthusiastic Sales",
+      description: "Energetic and persuasive tone for sales and marketing",
+      content: "You are an enthusiastic sales representative. Speak with energy and excitement. Be persuasive but not pushy. Highlight benefits and create a sense of urgency when appropriate. Keep the conversation engaging and positive."
+    },
+    {
+      title: "Technical Support",
+      description: "Patient and clear tone for technical assistance",
+      content: "You are a technical support specialist. Be patient and methodical in your explanations. Break down complex concepts into simple terms. Always confirm understanding and be prepared to rephrase or provide additional clarification."
+    }
+  ];
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -263,6 +310,7 @@ export default function Dashboard() {
                     <SelectContent className="bg-dark-navy border-white/20">
                       <SelectItem value="sales">Sales</SelectItem>
                       <SelectItem value="awareness">Awareness</SelectItem>
+                      <SelectItem value="promotion">Promotion</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -412,11 +460,17 @@ export default function Dashboard() {
                     key={persona.id}
                     onClick={() => {
                       setSelectedPersona(persona.id);
+
+                      if (currentAudio) {
+                        currentAudio.pause();
+                        currentAudio.currentTime = 0;
+                      }
                       
                       // Only play if voice sample exists
                       if (persona.voiceSample) {
                         console.log('Attempting to play:', persona.voiceSample);
                         const audio = new Audio(persona.voiceSample);
+                        setCurrentAudio(audio);
                         
                         // Add event listeners for debugging
                         audio.onerror = (e) => {
@@ -477,10 +531,55 @@ export default function Dashboard() {
               </div>
               
               {selectedPersona === "custom" && (
-                <Textarea 
-                  placeholder="Describe the voice personality you're looking for..."
-                  className="bg-white/10 border-white/20 text-white"
-                />
+                <div className="space-y-4">
+                  {showCustomPrompt ? (
+                    <>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {promptTemplates.map((template) => (
+                          <div
+                            key={template.title}
+                            className="p-4 border rounded-lg cursor-pointer hover:bg-white/5 transition-colors"
+                            onClick={() => setCustomPrompt(template.content)}
+                          >
+                            <h4 className="font-medium">{template.title}</h4>
+                            <p className="text-sm text-gray-400">{template.description}</p>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="space-y-3">
+                        <div className="relative">
+                          <Textarea
+                            placeholder="Or describe the voice personality you're looking for..."
+                            className="bg-white/10 border-white/20 text-white min-h-[120px]"
+                            value={customPrompt}
+                            onChange={(e) => setCustomPrompt(e.target.value)}
+                            disabled={isSubmitting}
+                          />
+                          <div className="text-xs text-gray-400 text-right mt-1">
+                            {customPrompt.length}/1000 characters
+                          </div>
+                        </div>
+                        <Button
+                          onClick={handleSubmitCustomPrompt}
+                          disabled={!customPrompt.trim() || isSubmitting}
+                          className="w-full sm:w-auto"
+                        >
+                          {isSubmitting ? 'Generating...' : 'Generate Custom Persona'}
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="p-4 border border-white/10 rounded-lg bg-white/5">
+                      <p className="text-sm text-gray-300">Your custom persona has been generated.</p>
+                    </div>
+                  )}
+                  {submitSuccess && (
+                    <div className="p-3 bg-green-900/30 border border-green-800 text-green-400 text-sm rounded-md flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4" />
+                      Your custom persona has been generated successfully!
+                    </div>
+                  )}
+                </div>
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -785,8 +884,8 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-br from-dark-navy via-midnight to-deep-purple">
       <div className="flex">
         {/* Sidebar */}
-        <div className="w-64 min-h-screen bg-white/5 border-r border-white/10">
-          <div className="p-6">
+        <div className="w-64 min-h-screen bg-white/5 border-r border-white/10 flex flex-col">
+          <div className="p-6 flex-1">
             <h2 className="text-2xl font-bold text-white mb-8">NeuraVoice</h2>
             <nav className="space-y-2">
               {sidebarItems.map((item) => (
@@ -804,6 +903,16 @@ export default function Dashboard() {
                 </button>
               ))}
             </nav>
+          </div>
+          <div className="p-4 border-t border-white/10">
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-gray-300 hover:text-white hover:bg-white/5"
+              onClick={() => window.open('mailto:support@neuravoice.com', '_blank')}
+            >
+              <Mail className="w-4 h-4 mr-2" />
+              Contact Support
+            </Button>
           </div>
         </div>
         

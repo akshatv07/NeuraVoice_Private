@@ -27,10 +27,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Voice agents routes
-  app.get("/api/voice-agents", isAuthenticated, async (req: any, res) => {
+  app.get("/api/voice-agents", isAuthenticated, (req: any, res) => {
     try {
       const userId = process.env.NODE_ENV === 'production' ? req.user.claims.sub : req.user.id;
-      const agents = await storage.getVoiceAgentsByUser(userId);
+      const agents = storage.getVoiceAgentsByUser(userId);
       res.json(agents);
     } catch (error) {
       console.error("Error fetching voice agents:", error);
