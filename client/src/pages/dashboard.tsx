@@ -519,9 +519,14 @@ export default function Dashboard() {
                         <p className="font-bold text-sm text-primary">{persona.name}</p>
                         {persona.id !== 'custom' && (
                           <>
-                            <p className="text-xs font-medium text-gray-300">Tone: {persona.tone || 'Neutral'}</p>
-                            <p className="text-xs text-gray-400">{persona.gender} • {persona.language}</p>
-                            <p className="text-xs text-gray-400">{persona.style || 'Conversational'}</p>
+                            <p className="text-xs font-medium text-gray-300">{persona.tone || 'Neutral'}</p>
+                            <p className="text-xs text-gray-400">
+                              {persona.name === 'Aryanveer' && 'A persuasive Hindi voice'}
+                              {persona.name === 'Monika' && 'An empathetic Hindi voice'}
+                              {persona.name === 'Vikram' && 'A resonant English voice'}
+                              {persona.name === 'Raju' && 'A friendly English voice'}
+                              {persona.name === 'Custom' && 'Custom voice configuration'}
+                            </p>
                           </>
                         )}
                       </div>
@@ -582,27 +587,28 @@ export default function Dashboard() {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div>
-                  <Label>Background Sound</Label>
-                  <Select defaultValue="none">
-                    <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                      <SelectValue placeholder="Select background..." />
-                    </SelectTrigger>
-                    <SelectContent className="bg-dark-navy border-white/20">
-                      <SelectItem value="none">None</SelectItem>
-                      <SelectItem value="office">Office Noise</SelectItem>
-                      <SelectItem value="reception">Reception Noise</SelectItem>
-                      <SelectItem value="conference">Conference Noise</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Background URL (MP3 only)</Label>
-                  <Input 
-                    placeholder="https://example.com/audio.mp3"
-                    className="bg-white/10 border-white/20 text-white"
-                  />
+              <div className="mt-6">
+                <div className="space-y-3">
+                  <div className="space-y-1.5 w-1/4">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-xs text-gray-400">Background Sound</Label>
+                      <span className="text-xs text-gray-500">Optional</span>
+                    </div>
+                    <div>
+                      <Select defaultValue="none">
+                        <SelectTrigger className="w-full bg-white/10 border-white/20 text-white h-8 text-sm hover:bg-white/15 transition-colors">
+                          <SelectValue placeholder="Select sound" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-dark-navy border-white/20 text-sm w-[--radix-select-trigger-width]">
+                          <SelectItem value="none" className="hover:bg-white/10">Default(None)</SelectItem>
+                          <SelectItem value="office" className="hover:bg-white/10">Office Premise</SelectItem>
+                          <SelectItem value="reception" className="hover:bg-white/10">Reception </SelectItem>
+                          <SelectItem value="conference" className="hover:bg-white/10">Conference Room</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <p className="text-[11px] text-gray-500 mt-1">Add ambient sound to make the voice feel more natural</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -718,7 +724,12 @@ export default function Dashboard() {
                 </motion.div>
                 <div className="space-y-2">
                   <h3 className="text-2xl font-semibold text-white">Call in Progress</h3>
-                  <p className="text-gray-300">Speaking with your voice assistant...</p>
+                  <p className="text-gray-300">
+                    {createdAssistant 
+                      ? `Speaking with ${createdAssistant.name}...`
+                      : 'Speaking with voice assistant...'
+                    }
+                  </p>
                 </div>
                 <Button 
                   onClick={() => setIsTestMode(false)}
