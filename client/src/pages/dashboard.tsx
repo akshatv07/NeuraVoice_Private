@@ -317,60 +317,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <Separator className="bg-white/20" />
 
-            {/* Processor Configuration */}
-            <div className="space-y-4">
-              <Label className="text-lg font-semibold flex items-center">
-                <Zap className="w-5 h-5 mr-2" />
-                Processor
-              </Label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label>Provider</Label>
-                  <Select value={selectedProvider} onValueChange={setSelectedProvider}>
-                    <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-dark-navy border-white/20">
-                      {providers.map(provider => (
-                        <SelectItem key={provider.id} value={provider.id}>
-                          {provider.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Models</Label>
-                  <Select value={selectedModel} onValueChange={setSelectedModel}>
-                    <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                      <SelectValue placeholder="Select model..." />
-                    </SelectTrigger>
-                    <SelectContent className="bg-dark-navy border-white/20">
-                      {providers.find(p => p.id === selectedProvider)?.models.map(model => (
-                        <SelectItem key={model.id} value={model.id}>
-                          <div className="flex items-center justify-between w-full">
-                            <span>{model.name}</span>
-                            <div className="flex items-center space-x-2 ml-4">
-                              <span className="text-xs text-gray-400">{model.latency}</span>
-                              <span className="text-xs text-gray-400">{model.cost}</span>
-                              {model.tags.map(tag => (
-                                <Badge key={tag} variant="secondary" className="text-xs">
-                                  {tag}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-
-            <Separator className="bg-white/20" />
 
             {/* Information Center */}
             <div className="space-y-4">
