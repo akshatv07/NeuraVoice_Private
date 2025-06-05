@@ -209,17 +209,21 @@ export default function Dashboard() {
   };
 
   const renderPlayground = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-white">Playground</h1>
+    <div className="space-y-8">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-white">Voice Assistant Playground</h1>
+        </div>
         <Button 
           onClick={() => setShowCreateBot(true)}
-          className="bg-gradient-to-r from-primary to-secondary hover:scale-105 transition-transform"
+          className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity"
         >
-          <Play className="w-4 h-4 mr-2" />
-          Create Voice Assistant
+          <Sparkles className="w-4 h-4 mr-2" />
+          Create New Assistant
         </Button>
       </div>
+      
+      <div className="gradient-divider"></div>
 
       {createdAssistant ? (
         <Card className="bg-white/10 border-white/20">
@@ -245,7 +249,7 @@ export default function Dashboard() {
             <div className="flex flex-col items-center">
               <Volume2 className="w-12 h-12 text-gray-400 mb-4" />
               <h3 className="text-xl font-semibold text-white mb-2">No Voice Assistants Yet</h3>
-              <p className="text-gray-400">Click the 'Create Voice Assistant' button above to get started</p>
+              <p className="text-gray-400">Click the 'Create New Assistant' button to get started</p>
             </div>
           </CardContent>
         </Card>
@@ -320,6 +324,7 @@ export default function Dashboard() {
 
 
             {/* Information Center */}
+            <div className="gradient-divider"></div>
             <div className="space-y-4">
               <Label className="text-lg font-semibold flex items-center">
                 <FileText className="w-5 h-5 mr-2" />
@@ -396,6 +401,7 @@ export default function Dashboard() {
             </div>
 
             {/* Voice Configuration */}
+            <div className="gradient-divider"></div>
             <div className="space-y-4">
               <Label className="text-lg font-semibold flex items-center">
                 <Mic className="w-5 h-5 mr-2" />
@@ -611,8 +617,12 @@ export default function Dashboard() {
   );
 
   const renderTest = () => (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-white">Test Voice Assistant</h1>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold text-white">Test Voice Assistant</h1>
+      </div>
+      
+      <div className="gradient-divider"></div>
       
       <div className="max-w-md mx-auto">
         <Card className="bg-white/10 border-white/20">
@@ -690,13 +700,19 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
     </div>
   );
 
   const renderAnalytics = () => (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-white">Analytics Overview</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold text-white">Analytics Overview</h1>
+        <p className="text-gray-300">Track your voice assistant's performance and usage</p>
+      </div>
+      
+      <div className="gradient-divider"></div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <Card className="bg-white/10 border-white/20">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -791,6 +807,96 @@ export default function Dashboard() {
     </div>
   );
 
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [otp, setOtp] = useState('');
+  const [verificationStatus, setVerificationStatus] = useState<'idle' | 'sending' | 'verifying' | 'verified'>('idle');
+  const [verificationSid, setVerificationSid] = useState('');
+  const [isCallInitiated, setIsCallInitiated] = useState(false);
+
+  const handleSendOtp = async () => {
+    if (!phoneNumber.trim()) {
+      alert('Please enter a valid phone number');
+      return;
+    }
+    
+    try {
+      setVerificationStatus('sending');
+      // TODO: Replace with actual API call to your backend to send OTP
+      // const response = await fetch('/api/twilio/send-otp', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ to: phoneNumber })
+      // });
+      // const data = await response.json();
+      // setVerificationSid(data.verificationSid);
+      
+      // Simulate API call
+      setTimeout(() => {
+        setVerificationSid('simulated_verification_sid');
+        setVerificationStatus('verifying');
+      }, 1500);
+      
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+      alert('Failed to send OTP. Please try again.');
+      setVerificationStatus('idle');
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!otp.trim() || otp.length !== 6) {
+      alert('Please enter a valid 6-digit OTP');
+      return;
+    }
+    
+    try {
+      setVerificationStatus('verifying');
+      // TODO: Replace with actual API call to verify OTP
+      // const response = await fetch('/api/twilio/verify-otp', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ 
+      //     to: phoneNumber,
+      //     code: otp,
+      //     verificationSid: verificationSid
+      //   })
+      // });
+      // const data = await response.json();
+      
+      // Simulate API call
+      setTimeout(() => {
+        setVerificationStatus('verified');
+      }, 1500);
+      
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      alert('Failed to verify OTP. Please try again.');
+      setVerificationStatus('idle');
+    }
+  };
+
+  const handleCallMe = async () => {
+    try {
+      // TODO: Replace with actual API call to initiate the call
+      // const response = await fetch('/api/twilio/call', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ to: phoneNumber })
+      // });
+      // const data = await response.json();
+      
+      alert(`Call initiated to ${phoneNumber}`);
+    } catch (error) {
+      console.error('Error initiating call:', error);
+      alert('Failed to initiate call. Please try again.');
+    }
+  };
+
+  const resetVerification = () => {
+    setVerificationStatus('idle');
+    setOtp('');
+  };
+
   const renderIntegrations = () => (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-white">Integrations</h1>
@@ -805,21 +911,149 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <Card className="bg-white/5 border-white/10 hover:border-primary/50 transition-colors">
                 <CardContent className="p-6 flex flex-col items-center text-center">
-                  <div className="w-16 h-16 bg-blue-100/10 rounded-full flex items-center justify-center mb-4">
-                    <Phone className="w-8 h-8 text-blue-400" />
+                  <div className="w-20 h-20 rounded-full border border-white/10 flex items-center justify-center mb-4">
+                    {/* <img 
+                      src="/images/twilio-logo-red.png" 
+                      alt="Twilio" 
+                      className="w-10 h-10 object-contain"
+                    /> */}
                   </div>
                   <h3 className="text-lg font-medium text-white mb-2">Twilio</h3>
-                  <p className="text-sm text-gray-300 mb-4">Make and receive phone calls with your voice assistant</p>
-                  <Button 
-                    onClick={() => window.open('https://www.twilio.com/en-us', '_blank')}
-                    className="bg-blue-600 hover:bg-blue-700 text-white w-full"
-                  >
-                    Connect with Twilio
-                  </Button>
+                  <p className="text-sm text-gray-300 mb-4">Receive a phone call from our voice assistant.</p>
+                  
+                  <div className="w-full space-y-3">
+                    {verificationStatus === 'idle' && (
+                      <>
+                        <div className="space-y-2">
+                          <Input
+                            type="tel"
+                            placeholder="Enter phone number"
+                            className="bg-white/5 border-white/20 text-white placeholder-gray-400"
+                            value={phoneNumber}
+                            onChange={(e) => setPhoneNumber(e.target.value)}
+                            disabled={verificationStatus !== 'idle'}
+                          />
+                          <p className="text-xs text-gray-400 text-left">Include country code (e.g., +1 for US)</p>
+                        </div>
+                        
+                        <Button 
+                          onClick={handleSendOtp}
+                          disabled={verificationStatus !== 'idle' || !phoneNumber.trim()}
+                          className="bg-blue-600 hover:bg-blue-700 text-white w-full"
+                        >
+                          Verify Phone Number
+                        </Button>
+                      </>
+                    )}
+                    
+                    {verificationStatus === 'sending' && (
+                      <div className="text-center py-4">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+                        <p className="text-sm text-gray-300">Sending verification code...</p>
+                      </div>
+                    )}
+                    
+                    {(verificationStatus === 'verifying' || verificationStatus === 'verified') && (
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <p className="text-sm text-gray-300">We've sent a 6-digit code to {phoneNumber}</p>
+                          <Input
+                            type="text"
+                            placeholder="Enter 6-digit OTP"
+                            className="bg-white/5 border-white/20 text-white placeholder-gray-400 text-center text-xl tracking-widest h-12"
+                            value={otp}
+                            onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                            maxLength={6}
+                            disabled={verificationStatus === 'verified'}
+                          />
+                        </div>
+                        
+                        {verificationStatus === 'verifying' ? (
+                          <>
+                            <Button 
+                              onClick={handleVerifyOtp}
+                              disabled={!otp || otp.length !== 6}
+                              className="bg-blue-600 hover:bg-blue-700 text-white w-full"
+                            >
+                              Verify OTP
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              onClick={resetVerification}
+                              className="text-xs text-gray-400 hover:text-white w-full"
+                            >
+                              Use a different number
+                            </Button>
+                          </>
+                        ) : (
+                          <div className="flex items-center justify-center space-x-2 text-green-400">
+                            <CheckCircle className="w-5 h-5" />
+                            <span>Phone number verified successfully!</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
+                    {verificationStatus === 'verified' && (
+                      <>
+                        <div className="relative my-4">
+                          <div className="absolute inset-0 flex items-center">
+                            <span className="w-full border-t border-white/10"></span>
+                          </div>
+                          <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-white/5 px-2 text-gray-400">Ready to Call</span>
+                          </div>
+                        </div>
+                        
+                        <Button 
+                          onClick={handleCallMe}
+                          className="bg-green-600 hover:bg-green-700 text-white w-full"
+                        >
+                          Get a Call Now
+                        </Button>
+                      </>
+                    )}
+                    
+                    <div className="relative my-4">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-white/10"></span>
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-white/5 px-2 text-gray-400">Or</span>
+                      </div>
+                    </div>
+                    
+                    <Button 
+                      variant="outline"
+                      onClick={() => window.open('https://www.twilio.com/en-us', '_blank')}
+                      className="bg-transparent border-white/20 text-white hover:bg-white/10 w-full"
+                    >
+                      Connect your voice assistant with Twilio
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
               
-              {/* Add more integration cards here */}
+              {/* WhatsApp Integration - Coming Soon */}
+              <Card className="bg-white/5 border-white/10 opacity-70">
+                <CardContent className="p-6 flex flex-col items-center text-center">
+                  <div className="w-20 h-20 rounded-full border border-white/10 flex items-center justify-center mb-4">
+                    {/* <img 
+                      src="/images/WhatsApp.svg.png" 
+                      alt="WhatsApp" 
+                      className="w-10 h-10 object-contain"
+                    /> */}
+                  </div>
+                  <h3 className="text-lg font-medium text-white mb-2">WhatsApp</h3>
+                  <p className="text-sm text-gray-300 mb-4">Coming Soon: WhatsApp integration for your voice assistant</p>
+                  <Button 
+                    disabled
+                    className="bg-green-600 hover:bg-green-700 text-white w-full opacity-50 cursor-not-allowed"
+                  >
+                    Coming Soon
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </CardContent>
@@ -845,6 +1079,7 @@ export default function Dashboard() {
         <div className="w-64 min-h-screen bg-white/5 border-r border-white/10 flex flex-col">
           <div className="p-6 flex-1">
             <h2 className="text-2xl font-bold text-white mb-8">NeuraVoice</h2>
+            <div className="gradient-divider mb-6"></div>
             <nav className="space-y-2">
               {sidebarItems.map((item) => (
                 <button
@@ -862,7 +1097,8 @@ export default function Dashboard() {
               ))}
             </nav>
           </div>
-          <div className="p-4 border-t border-white/10">
+          <div className="gradient-divider"></div>
+          <div className="p-4">
             <Button
               variant="ghost"
               className="w-full justify-start text-gray-300 hover:text-white hover:bg-white/5"
@@ -875,8 +1111,9 @@ export default function Dashboard() {
         </div>
         
         {/* Main Content */}
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 overflow-y-auto">
           <div className="max-w-7xl mx-auto">
+            <div className="gradient-divider mb-8"></div>
             {renderContent()}
           </div>
         </main>
