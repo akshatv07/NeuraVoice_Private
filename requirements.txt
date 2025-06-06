@@ -1,0 +1,40 @@
+# Python requirements for NeuraVoice
+# This file contains Python dependencies that might be needed for development or build processes
+
+# General
+python-dotenv==1.0.0  # For loading environment variables
+requests==2.31.0      # For making HTTP requests
+
+# Development
+black==24.4.2         # Code formatter
+isort==5.13.2         # Import sorter
+pylint==3.1.0         # Linter
+mypy==1.9.0           # Static type checker
+
+# Testing
+pytest==8.1.1         # Testing framework
+pytest-cov==4.1.0     # Coverage reporting
+
+# API (if you add Python API endpoints in the future)
+fastapi==0.110.0      # Modern, fast web framework
+uvicorn==0.29.0       # ASGI server
+python-multipart==0.0.9 # For handling file uploads
+
+# Database (if you add Python database interactions)
+sqlalchemy==2.0.28    # SQL toolkit and ORM
+alembic==1.13.1       # Database migrations
+
+# AI/ML (if you plan to add Python-based AI features)
+numpy==1.26.4         # Numerical computing
+pandas==2.2.1         # Data manipulation
+torch==2.2.1          # Machine learning framework
+transformers==4.39.3  # NLP models
+
+# Build and Deployment
+docker==7.0.0          # Docker SDK for Python
+python-gitlab==4.5.0  # GitLab API client
+
+# Utilities
+python-dateutil==2.9.0 # Date parsing and manipulation
+loguru==0.7.2         # Better logging
+tqdm==4.66.2          # Progress bars

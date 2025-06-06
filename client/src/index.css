@@ -1,0 +1,207 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Light Theme Colors */
+  --background: 0 0% 98%;         /* Off-white background */
+  --foreground: 240 10% 5%;      /* Very dark gray for primary text - better contrast */
+  --muted-foreground: 240 4% 35%; /* Darker gray for secondary text - better readability */
+  
+  /* Card & Panel Colors */
+  --card: 0 0% 100%;             /* Pure white for cards */
+  --card-foreground: 240 10% 5%;  /* Very dark gray for card text */
+  
+  /* Primary Accent - Electric Blue */
+  --primary: 210 100% 45%;       /* Slightly darker blue for better contrast */
+  --primary-foreground: 0 0% 100%; /* White text on primary */
+  
+  /* Secondary Accent - Magenta/Purple */
+  --secondary: 271 80% 55%;      /* Slightly darker purple for better contrast */
+  --secondary-foreground: 0 0% 100%; /* White text on secondary */
+  
+  /* UI Elements */
+  --muted: 240 5% 92%;           /* Light gray for muted backgrounds */
+  --accent: 192 100% 45%;        /* Slightly darker blue for accents */
+  --accent-foreground: 0 0% 100%; /* White text on accent */
+  --border: 240 6% 85%;          /* Slightly darker borders for better visibility */
+  --input: 0 0% 100%;            /* White input backgrounds */
+  --ring: 210 100% 45%;          /* Slightly darker ring color */
+  
+  /* Status Colors */
+  --destructive: 0 85% 50%;      /* Brighter red for errors */
+  --destructive-foreground: 0 0% 100%; /* White text on destructive */
+  --success: 142 76% 42%;        /* Slightly darker green for better contrast */
+  --warning: 38 92% 50%;         /* Slightly darker yellow for better contrast */
+  
+  /* Custom Colors */
+  --dark-navy: 240 30% 9%;       /* Dark navy for backgrounds */
+  --midnight: 240 26% 14%;       /* Slightly lighter navy */
+  
+  /* Border Radius */
+  --radius: 0.5rem;
+}
+
+/* Dark theme */
+.dark {
+  --background: 240 30% 9%;       /* #1A1A2E - Deep desaturated indigo */
+  --foreground: 240 30% 94%;     /* #E0E0F0 - Soft white for primary text */
+  --muted-foreground: 220 10% 70%; /* #9FA6B2 - Light grey for secondary text */
+  
+  /* Card & Panel Colors */
+  --card: 240 15% 20%;           /* #282A3A - Lighter desaturated indigo for cards */
+  --card-foreground: 240 30% 94%; /* #E0E0F0 - Text on cards */
+  
+  /* Primary Accent - Electric Blue */
+  --primary: 210 100% 50%;       /* #007BFF - Vibrant electric blue */
+  --primary-foreground: 0 0% 100%; /* White text on primary */
+  
+  /* Secondary Accent - Magenta/Purple */
+  --secondary: 271 80% 60%;      /* #8A2BE2 - Contrasting magenta/purple */
+  --secondary-foreground: 0 0% 100%; /* White text on secondary */
+  
+  /* UI Elements */
+  --muted: 240 15% 25%;          /* Slightly lighter than card for muted backgrounds */
+  --accent: 192 100% 50%;        /* #00C2FF - Lighter blue for accents */
+  --accent-foreground: 240 10% 10%; /* Dark text on accent */
+  --border: 240 15% 30%;         /* #3D3D52 - Subtle borders */
+  --input: 240 15% 25%;          /* Slightly lighter than card for inputs */
+  --ring: 210 100% 50%;          /* Same as primary for focus rings */
+  
+  /* Status Colors */
+  --destructive: 0 80% 45%;      /* #DC3545 - Desaturated red for errors */
+  --destructive-foreground: 0 0% 100%; /* White text on destructive */
+  --success: 142 70% 45%;        /* #28A745 - Desaturated green for success */
+  --warning: 45 90% 50%;         /* #FFC107 - Yellow for warnings */
+  
+  /* Custom Colors */
+  --dark-navy: 240 36% 7%;       /* #0F0F23 - Darker navy for backgrounds */
+  --midnight: 240 26% 14%;       /* #1A1A2E - Slightly lighter navy */
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', sans-serif;
+    user-select: none; /* Standard syntax */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .bg-dark-navy {
+    background-color: hsl(var(--dark-navy));
+  }
+  
+  .bg-midnight {
+    background-color: hsl(var(--midnight));
+  }
+  
+  .text-primary {
+    color: hsl(var(--primary));
+  }
+  
+  .text-secondary {
+    color: hsl(var(--secondary));
+  }
+  
+  .text-accent {
+    color: hsl(var(--accent));
+  }
+  
+  .text-coral {
+    color: hsl(var(--coral));
+  }
+
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+}
+
+/* Custom animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.8);
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out;
+}
+
+/* Smooth scrolling for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--dark-navy));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--secondary));
+}
+
+/* Selection styles */
+::selection {
+  background-color: hsl(var(--primary) / 0.3);
+  color: hsl(var(--foreground));
+}
+
+/* Focus styles */
+.focus-visible:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
