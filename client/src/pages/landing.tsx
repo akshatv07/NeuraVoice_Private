@@ -218,7 +218,7 @@ export default function Landing() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            Create lifelike, intelligent voice agents without code. Deploy conversational AI that sounds natural and drives results.
+            Create Human-like, intelligent voice agents without code. Deploy conversational AI that sounds natural and drives results.
           </motion.p>
 
           <motion.div 
@@ -276,14 +276,14 @@ export default function Landing() {
                 {
                   step: "01",
                   title: "Upload Knowledge Base",
-                  description: "Upload your business documents, FAQs, or data to train the AI",
+                  description: "Upload your website URL, and business data to train the Agent",
                   icon: "fas fa-cloud-upload-alt",
                   gradient: "from-primary to-secondary"
                 },
                 {
                   step: "02",
                   title: "Choose Voice",
-                  description: "Select from lifelike AI voices to represent your brand",
+                  description: "Select from Human-like AI voices to represent your brand",
                   icon: "fas fa-microphone",
                   gradient: "from-secondary to-accent"
                 },
@@ -292,21 +292,21 @@ export default function Landing() {
                   title: "Assign a Goal",
                   description: "Define your AI agent's purpose and objectives",
                   icon: "fas fa-bullseye",
-                  gradient: "from-accent to-coral"
+                  gradient: "from-primary to-secondary"
                 },
                 {
                   step: "04",
                   title: "Test the Bot",
                   description: "Test and refine responses before going live",
                   icon: "fas fa-play-circle",
-                  gradient: "from-coral to-primary"
+                  gradient: "from-secondary to-accent"
                 },
                 {
                   step: "05",
                   title: "Go Live",
                   description: "Deploy instantly across platforms",
                   icon: "fas fa-rocket",
-                  gradient: "from-primary to-accent"
+                  gradient: "from-primary to-secondary"
                 }
               ].map((step, index) => (
                 <motion.div
@@ -364,38 +364,40 @@ export default function Landing() {
             {[
               {
                 icon: "fas fa-brain",
-                title: "Advanced AI Models",
-                description: "Powered by cutting-edge large language models for natural conversations",
+                title: "Agentic Intelligence Systems",
+                description: "Optimized agentic frameworks deliver ultra-low latency responses while maintaining natural conversation flow and context",
                 gradient: "from-primary to-secondary"
               },
               {
                 icon: "fas fa-microphone",
-                title: "Lifelike Voices",
-                description: "Choose from hundreds of realistic AI voices or clone your own",
+                title: "Humanized Voices",
+                description: "Choose from hundreds of realistic AI voices or clone your own with just a few samples",
                 gradient: "from-secondary to-accent"
               },
               {
                 icon: "fas fa-globe",
                 title: "Multi-Language Support",
-                description: "Support for 50+ languages including regional dialects",
-                gradient: "from-accent to-coral"
+                description: "Support for 5+ languages.",
+                gradient: "from-accent to-coral",
+                comingSoon: true
               },
               {
                 icon: "fas fa-bolt",
                 title: "Near Real-Time Processing",
-                description: "Ultra-low latency for seamless, natural conversations.",
+                description: "Ultra-low latency for seamless, natural conversations",
                 gradient: "from-coral to-primary"
               },
               {
                 icon: "fas fa-shield-alt",
                 title: "Enterprise Security",
                 description: "Bank-grade encryption and compliance with SOC2, HIPAA",
-                gradient: "from-primary to-accent"
+                gradient: "from-primary to-accent",
+                comingSoon: true
               },
               {
                 icon: "fas fa-chart-line",
-                title: "Advanced Analytics",
-                description: "Detailed insights into conversation performance and user behavior",
+                title: "Overview",
+                description: "Insights into conversation performance and user behavior",
                 gradient: "from-accent to-secondary"
               }
             ].map((feature, index) => (
@@ -408,7 +410,12 @@ export default function Landing() {
                 viewport={{ once: true }}
               >
                 <Card className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-all duration-500 transform hover:scale-105 h-full">
-                  <CardContent className="p-6">
+                  <CardContent className="p-6 relative">
+                    {feature.comingSoon && (
+                      <span className="absolute top-3 right-3 text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full">
+                        Coming Soon
+                      </span>
+                    )}
                     <div className={`w-12 h-12 bg-gradient-to-r ${feature.gradient} rounded-lg flex items-center justify-center mb-4 group-hover:shadow-lg transition-all duration-300`}>
                       <i className={`${feature.icon} text-xl text-white`}></i>
                     </div>
@@ -557,7 +564,7 @@ export default function Landing() {
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                     <div className="space-y-6">
                       <p className="text-lg text-gray-200 leading-relaxed">
-                        <span className="text-accent font-semibold">NeuraVoice</span> is a plug-and-play, no-code voice AI platform designed to help anyone build lifelike, intelligent voice agents — without writing a single line of code.
+                        <span className="text-accent font-semibold">NeuraVoice</span> is a plug-and-play, no-code voice AI platform designed to help anyone build humanized, intelligent voice agents — without writing a single line of code.
                       </p>
                       <p className="text-lg text-gray-200 leading-relaxed">
                         Built with cutting-edge large language models and real-time infrastructure, NeuraVoice enables dynamic, multi-turn conversations that sound natural, human, and brand-consistent.
@@ -632,7 +639,7 @@ export default function Landing() {
       <section className="py-12 px-4">
         <div className="container mx-auto max-w-4xl">
           <div>
-            <h3 className="text-xl font-semibold text-white mb-4">About LenDenClub</h3>
+            <h3 className="text-xl font-semibold text-white mb-4">Powered by LenDenClub</h3>
             <div className="space-y-4 text-gray-300 text-sm leading-relaxed">
               <p>
                 LenDenClub is India's No.1 Peer-to-Peer (P2P) Lending platform which is RBI registered NBFC - P2P. 

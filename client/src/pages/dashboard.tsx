@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -61,12 +62,7 @@ export default function Dashboard() {
   const [showCustomPrompt, setShowCustomPrompt] = useState<boolean>(true);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [callStatus, setCallStatus] = useState<'idle' | 'calling' | 'called'>('idle');
-  const [voiceAssistants] = useState([
-    { id: '1', name: 'Customer Support Bot' },
-    { id: '2', name: 'Sales Assistant' },
-    { id: '3', name: 'Appointment Scheduler' },
-  ]);
-  const [selectedAnalyticsAssistant, setSelectedAnalyticsAssistant] = useState('1');
+  const [selectedAnalyticsAssistant, setSelectedAnalyticsAssistant] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmitCustomPrompt = () => {
@@ -230,7 +226,7 @@ export default function Dashboard() {
           className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity"
         >
           <Sparkles className="w-4 h-4 mr-2" />
-          Create New Assistant
+          Create Assistant
         </Button>
       </div>
       
@@ -302,7 +298,7 @@ export default function Dashboard() {
               <Label className="text-lg font-semibold">Basic Configuration</Label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="botName" className="mb-2 block">Voice Assistant Name</Label>
+                  <Label htmlFor="botName" className="mb-2 block">Agent Name</Label>
                   <Input 
                     id="botName"
                     value={botName}
@@ -312,7 +308,7 @@ export default function Dashboard() {
                   />
                 </div>
                 <div>
-                  <Label>Domain</Label>
+                  <Label>Industry</Label>
                   <Select value={selectedDomain} onValueChange={setSelectedDomain}>
                     <SelectTrigger className="bg-white/10 border-white/20 text-white">
                       <SelectValue placeholder="Select domain..." />
@@ -326,7 +322,7 @@ export default function Dashboard() {
                   </Select>
                 </div>
                 <div>
-                  <Label>Department</Label>
+                  <Label>Use Case</Label>
                   <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
                     <SelectTrigger className="bg-white/10 border-white/20 text-white">
                       <SelectValue placeholder="Select department..." />
@@ -362,6 +358,20 @@ export default function Dashboard() {
                 Strategy & Behavior
               </Label>
               <div className="space-y-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="no-profanity" className="border-white/30 data-[state=checked]:bg-primary" />
+                    <Label htmlFor="no-profanity" className="text-sm font-normal text-gray-300">Avoid profanity</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="stick-to-info" className="border-white/30 data-[state=checked]:bg-primary" />
+                    <Label htmlFor="stick-to-info" className="text-sm font-normal text-gray-300">Stick to provided information</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id="polite-tone" className="border-white/30 data-[state=checked]:bg-primary" />
+                    <Label htmlFor="polite-tone" className="text-sm font-normal text-gray-300">Maintain a polite tone</Label>
+                  </div>
+                </div>
                 <Label htmlFor="strategyPrompt" className="text-sm text-gray-300">
                   Define your assistant's behavior and strategy
                 </Label>
@@ -757,93 +767,116 @@ export default function Dashboard() {
     </div>
   );
 
-  const renderAnalytics = () => (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-        <h1 className="text-3xl font-bold text-white">Analytics Overview</h1>
-        <div className="mt-4 md:mt-0">
-          <Select
-            value={selectedAnalyticsAssistant}
-            onValueChange={setSelectedAnalyticsAssistant}
-          >
-            <SelectTrigger className="w-64 bg-white/10 border-white/20 text-white hover:bg-white/15">
-              <SelectValue placeholder="Select Voice Assistant" />
-            </SelectTrigger>
-            <SelectContent className="bg-dark-navy border-white/20">
-              {voiceAssistants.map((assistant) => (
-                <SelectItem 
-                  key={assistant.id} 
-                  value={assistant.id}
-                  className="hover:bg-white/10 text-white"
-                >
-                  {assistant.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+  const renderAnalytics = () => {
+    const showAnalytics = createdAssistant && selectedAnalyticsAssistant;
+
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+          <h1 className="text-3xl font-bold text-white">Analytics Overview</h1>
+          <div className="mt-4 md:mt-0">
+            <Select
+              value={selectedAnalyticsAssistant}
+              onValueChange={setSelectedAnalyticsAssistant}
+            >
+              <SelectTrigger className="w-64 bg-white/10 border-white/20 text-white hover:bg-white/15">
+                <SelectValue placeholder={
+                  createdAssistant ? "Select Voice Assistant" : "No voice assistant yet"
+                } />
+              </SelectTrigger>
+              {createdAssistant && (
+                <SelectContent className="bg-gray-900 border-gray-700">
+                  <SelectItem 
+                    value={createdAssistant.id}
+                    className="hover:bg-white/10 text-white"
+                  >
+                    {createdAssistant.name}
+                  </SelectItem>
+                </SelectContent>
+              )}
+            </Select>
+          </div>
         </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-white/5 border-white/10">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">Total Calls</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-white">1,248</p>
-            <p className="text-xs text-green-400 mt-1">+12% from last month</p>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-white/5 border-white/10">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">Average Duration</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-white">4:32 min</p>
-            <p className="text-xs text-green-400 mt-1">+0.5 min from last month</p>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-white/5 border-white/10">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">Satisfaction</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-white">92%</p>
-            <p className="text-xs text-green-400 mt-1">+3% from last month</p>
-          </CardContent>
-        </Card>
 
-        <Card className="bg-white/5 border-white/10 md:col-span-2">
-          <CardHeader>
-            <CardTitle className="text-sm font-medium text-gray-400">Call Volume</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-48 flex items-center justify-center bg-white/5 rounded-lg">
-              <p className="text-gray-400">Call volume chart will be displayed here</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white/5 border-white/10">
-          <CardHeader>
-            <CardTitle className="text-sm font-medium text-gray-400">Top Intents</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {['Billing Questions', 'Technical Support', 'Account Access', 'Product Information', 'Returns'].map((intent, i) => (
-              <div key={i} className="flex justify-between items-center">
-                <span className="text-sm text-gray-300">{intent}</span>
-                <span className="text-sm font-medium text-white">{Math.floor(Math.random() * 50) + 20}%</span>
+        {!showAnalytics ? (
+          <div className="mt-12 text-center">
+            <div className="max-w-md mx-auto p-6 bg-white/5 rounded-lg border border-white/10">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                <BarChart3 className="w-8 h-8 text-primary" />
               </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                {createdAssistant ? "Select a Voice Assistant" : "No Voice Assistant"}
+              </h3>
+              <p className="text-gray-400">
+                {createdAssistant 
+                  ? "Please select a voice assistant from the dropdown to view analytics."
+                  : "Create a voice assistant to start tracking analytics and performance metrics."}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className="bg-white/5 border-white/10">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-gray-400">Total Calls</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold text-white">1,248</p>
+              <p className="text-xs text-green-400 mt-1">+12% from last month</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-white/5 border-white/10">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-gray-400">Average Duration</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold text-white">4:32 min</p>
+              <p className="text-xs text-green-400 mt-1">+0.5 min from last month</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-white/5 border-white/10">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-gray-400">Satisfaction</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold text-white">92%</p>
+              <p className="text-xs text-green-400 mt-1">+3% from last month</p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/5 border-white/10 md:col-span-2">
+            <CardHeader>
+              <CardTitle className="text-sm font-medium text-gray-400">Call Volume</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-48 flex items-center justify-center bg-white/5 rounded-lg">
+                <p className="text-gray-400">Call volume chart will be displayed here</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/5 border-white/10">
+            <CardHeader>
+              <CardTitle className="text-sm font-medium text-gray-400">Top Intents</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {['Billing Questions', 'Technical Support', 'Account Access', 'Product Information', 'Returns'].map((intent, i) => (
+                <div key={i} className="flex justify-between items-center">
+                  <span className="text-sm text-gray-300">{intent}</span>
+                  <span className="text-sm font-medium text-white">{Math.floor(Math.random() * 50) + 20}%</span>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
+  };
 
-  const renderProfile = () => (
+  const renderProfile = () => (  
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-white text-center">Profile Settings</h1>
       <Card className="bg-white/10 border-white/20 max-w-2xl w-full mx-auto">
@@ -904,7 +937,7 @@ export default function Dashboard() {
         ? 'https://api.allorigins.win/raw?url='
         : '';
       const targetUrl = import.meta.env.DEV
-        ? encodeURIComponent('http://13.201.24.246:8000/outbound')
+        ? encodeURIComponent('http://20.0.165.135:8000/outbound')
         : '/api/outbound';
       
       const apiUrl = proxyUrl + targetUrl;
