@@ -133,7 +133,7 @@ export default function Landing() {
                 onClick={() => scrollToSection('use-cases')} 
                 className="text-gray-300 hover:text-white transition-colors duration-300"
               >
-                Use Cases
+                Workflow
               </button>
               <button 
                 onClick={() => scrollToSection('features')} 
@@ -208,7 +208,7 @@ export default function Landing() {
             </span>
             <br />
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Voice Intelligence
+              Voice Intelligence Platform
             </span>
           </motion.h1>
           
@@ -434,9 +434,14 @@ export default function Landing() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-              Seamless Integrations
-            </h2>
+            <div className="flex flex-col items-center">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                Seamless Integrations
+              </h2>
+              <span className="text-sm bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full mb-2">
+                Coming Soon
+              </span>
+            </div>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
               Connect with your existing tools and platforms in minutes
             </p>
@@ -623,6 +628,41 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* About LenDenClub Section */}
+      <section className="py-12 px-4">
+        <div className="container mx-auto max-w-4xl">
+          <div>
+            <h3 className="text-xl font-semibold text-white mb-4">About LenDenClub</h3>
+            <div className="space-y-4 text-gray-300 text-sm leading-relaxed">
+              <p>
+                LenDenClub is India's No.1 Peer-to-Peer (P2P) Lending platform which is RBI registered NBFC - P2P. 
+                We connect savvy lenders with creditworthy borrowers seeking short-term personal loans, delivering high 
+                returns while diversifying your portfolio.
+              </p>
+              <p>
+                Trusted by over 2 Crore users, LenDenClub stands as a one-stop solution for those looking to explore 
+                new avenues of growth.
+              </p>
+              <p className="text-amber-400/90 italic">
+                Please note, P2P investments carry risks. Investment decisions made by lenders based on this information 
+                are at their discretion, and LenDenClub does not guarantee loan recovery from borrowers.
+              </p>
+              <div className="pt-2">
+                <a 
+                  href="http://www.lendenclub.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 transition-colors inline-flex items-center"
+                >
+                  <span>Visit Website</span>
+                  <i className="fas fa-external-link-alt ml-2 text-xs"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="bg-midnight/80 backdrop-blur-sm border-t border-white/10 py-12">
         <div className="container mx-auto px-6">
@@ -673,7 +713,7 @@ export default function Landing() {
           </div>
 
           <div className="border-t border-white/10 mt-8 pt-8 text-center">
-            <p className="text-gray-400 text-sm">© 2024 NeuraVoice. All rights reserved. Building the future of conversational AI.</p>
+            <p className="text-gray-400 text-sm">© 2025 NeuraVoice. All rights reserved. Building the future of conversational AI.</p>
           </div>
         </div>
       </footer>

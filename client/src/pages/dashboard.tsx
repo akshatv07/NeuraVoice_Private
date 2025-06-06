@@ -31,7 +31,9 @@ import {
   Mail,
   Shield,
   Sparkles,
-  CheckCircle
+  CheckCircle,
+  Lightbulb,
+  Edit
 } from "lucide-react";
 // Using img tag directly for Vite compatibility
 
@@ -46,6 +48,7 @@ export default function Dashboard() {
   const [selectedGoal, setSelectedGoal] = useState("");
   const [selectedDomain, setSelectedDomain] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
+  const [strategyPrompt, setStrategyPrompt] = useState("");
   const [showCongrats, setShowCongrats] = useState(false);
   const [isTestMode, setIsTestMode] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -56,6 +59,14 @@ export default function Dashboard() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
   const [showCustomPrompt, setShowCustomPrompt] = useState<boolean>(true);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [callStatus, setCallStatus] = useState<'idle' | 'calling' | 'called'>('idle');
+  const [voiceAssistants] = useState([
+    { id: '1', name: 'Customer Support Bot' },
+    { id: '2', name: 'Sales Assistant' },
+    { id: '3', name: 'Appointment Scheduler' },
+  ]);
+  const [selectedAnalyticsAssistant, setSelectedAnalyticsAssistant] = useState('1');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmitCustomPrompt = () => {
@@ -119,7 +130,7 @@ export default function Dashboard() {
     { id: "test", label: "Test", icon: TestTube },
     { id: "analytics", label: "Analytics", icon: BarChart3 },
     { id: "integrations", label: "Integrations", icon: Link },
-    { id: "profile", label: "Profile", icon: Settings },
+    { id: "profile", label: "Profile", icon: User },
   ];
 
   const providers = [
@@ -233,13 +244,36 @@ export default function Dashboard() {
                 <h3 className="text-xl font-semibold text-white">{createdAssistant.name}</h3>
                 <p className="text-gray-300">Your voice assistant is ready to use</p>
               </div>
-              <Button 
-                className="bg-green-500 hover:bg-green-600 text-white"
-                onClick={() => setActiveSection('test')}
-              >
-                <Play className="w-4 h-4 mr-2" />
-                Test Now
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline"
+                  className="text-blue-400 border-blue-400 hover:bg-blue-400/10 hover:text-blue-300"
+                  onClick={() => setShowCreateBot(true)}
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  Edit
+                </Button>
+                <Button 
+                  variant="outline"
+                  className="text-red-400 border-red-400 hover:bg-red-400/10 hover:text-red-300"
+                  onClick={() => {
+                    if (window.confirm('Are you sure you want to delete this assistant? This action cannot be undone.')) {
+                      setCreatedAssistant(null);
+                      // Add any additional cleanup or API calls here
+                    }
+                  }}
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete
+                </Button>
+                <Button 
+                  className="bg-green-500 hover:bg-green-600 text-white"
+                  onClick={() => setActiveSection('test')}
+                >
+                  <Play className="w-4 h-4 mr-2" />
+                  Test Now
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -321,7 +355,26 @@ export default function Dashboard() {
               </div>
             </div>
 
-
+            {/* Strategy Prompt */}
+            <div className="space-y-4">
+              <Label className="text-lg font-semibold flex items-center">
+                <Lightbulb className="w-5 h-5 mr-2" />
+                Strategy & Behavior
+              </Label>
+              <div className="space-y-2">
+                <Label htmlFor="strategyPrompt" className="text-sm text-gray-300">
+                  Define your assistant's behavior and strategy
+                </Label>
+                <Textarea
+                  id="strategyPrompt"
+                  placeholder="Example: Act as a friendly and professional assistant that helps users with their banking needs. Be concise and focus on providing accurate information..."
+                  className="min-h-[100px] bg-white/10 border-white/20 text-white placeholder-gray-400"
+                />
+                <p className="text-xs text-gray-400">
+                  Describe how you want your assistant to behave, its tone, and any specific instructions
+                </p>
+              </div>
+            </div>
 
             {/* Information Center */}
             <div className="gradient-divider"></div>
@@ -705,59 +758,85 @@ export default function Dashboard() {
   );
 
   const renderAnalytics = () => (
-    <div className="space-y-8">
-      <div>
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
         <h1 className="text-3xl font-bold text-white">Analytics Overview</h1>
-        <p className="text-gray-300">Track your voice assistant's performance and usage</p>
+        <div className="mt-4 md:mt-0">
+          <Select
+            value={selectedAnalyticsAssistant}
+            onValueChange={setSelectedAnalyticsAssistant}
+          >
+            <SelectTrigger className="w-64 bg-white/10 border-white/20 text-white hover:bg-white/15">
+              <SelectValue placeholder="Select Voice Assistant" />
+            </SelectTrigger>
+            <SelectContent className="bg-dark-navy border-white/20">
+              {voiceAssistants.map((assistant) => (
+                <SelectItem 
+                  key={assistant.id} 
+                  value={assistant.id}
+                  className="hover:bg-white/10 text-white"
+                >
+                  {assistant.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       
-      <div className="gradient-divider"></div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card className="bg-white/10 border-white/20">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-300 text-sm">Total Calls</p>
-                <p className="text-2xl font-bold text-white">1,247</p>
-              </div>
-              <Phone className="w-8 h-8 text-primary" />
-            </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="bg-white/5 border-white/10">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-400">Total Calls</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold text-white">1,248</p>
+            <p className="text-xs text-green-400 mt-1">+12% from last month</p>
           </CardContent>
         </Card>
         
-        <Card className="bg-white/10 border-white/20">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-300 text-sm">Average Call Duration</p>
-                <p className="text-2xl font-bold text-white">3m 24s</p>
-              </div>
-              <Activity className="w-8 h-8 text-yellow-400" />
-            </div>
+        <Card className="bg-white/5 border-white/10">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-400">Average Duration</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold text-white">4:32 min</p>
+            <p className="text-xs text-green-400 mt-1">+0.5 min from last month</p>
           </CardContent>
         </Card>
         
-        <Card className="bg-white/10 border-white/20">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-300 text-sm">Call Volume</p>
-                <p className="text-2xl font-bold text-white">89.4%</p>
-              </div>
-              <Users className="w-8 h-8 text-green-400" />
+        <Card className="bg-white/5 border-white/10">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-400">Satisfaction</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold text-white">92%</p>
+            <p className="text-xs text-green-400 mt-1">+3% from last month</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white/5 border-white/10 md:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-sm font-medium text-gray-400">Call Volume</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-48 flex items-center justify-center bg-white/5 rounded-lg">
+              <p className="text-gray-400">Call volume chart will be displayed here</p>
             </div>
           </CardContent>
         </Card>
-        
-        <Card className="bg-white/10 border-white/20">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-300 text-sm">Cost per Conversation</p>
-                <p className="text-2xl font-bold text-white">$0.12</p>
+
+        <Card className="bg-white/5 border-white/10">
+          <CardHeader>
+            <CardTitle className="text-sm font-medium text-gray-400">Top Intents</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {['Billing Questions', 'Technical Support', 'Account Access', 'Product Information', 'Returns'].map((intent, i) => (
+              <div key={i} className="flex justify-between items-center">
+                <span className="text-sm text-gray-300">{intent}</span>
+                <span className="text-sm font-medium text-white">{Math.floor(Math.random() * 50) + 20}%</span>
               </div>
-              <Zap className="w-8 h-8 text-secondary" />
-            </div>
+            ))}
           </CardContent>
         </Card>
       </div>
@@ -771,9 +850,9 @@ export default function Dashboard() {
         <CardContent className="p-8">
           <div className="space-y-6">
             <div className="flex items-center space-x-4">
-              <Avatar className="w-16 h-16">
-                <AvatarFallback className="bg-primary text-white text-xl">U</AvatarFallback>
-              </Avatar>
+              <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
+                <span className="text-white text-2xl font-bold">U</span>
+              </div>
               <div>
                 <h3 className="text-xl font-semibold text-white">User Profile</h3>
                 <div className="flex items-center text-gray-300 mt-1">
@@ -807,94 +886,99 @@ export default function Dashboard() {
     </div>
   );
 
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [otp, setOtp] = useState('');
-  const [verificationStatus, setVerificationStatus] = useState<'idle' | 'sending' | 'verifying' | 'verified'>('idle');
-  const [verificationSid, setVerificationSid] = useState('');
-  const [isCallInitiated, setIsCallInitiated] = useState(false);
-
-  const handleSendOtp = async () => {
+  const handleCallMe = async () => {
     if (!phoneNumber.trim()) {
       alert('Please enter a valid phone number');
       return;
     }
     
-    try {
-      setVerificationStatus('sending');
-      // TODO: Replace with actual API call to your backend to send OTP
-      // const response = await fetch('/api/twilio/send-otp', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ to: phoneNumber })
-      // });
-      // const data = await response.json();
-      // setVerificationSid(data.verificationSid);
-      
-      // Simulate API call
-      setTimeout(() => {
-        setVerificationSid('simulated_verification_sid');
-        setVerificationStatus('verifying');
-      }, 1500);
-      
-    } catch (error) {
-      console.error('Error sending OTP:', error);
-      alert('Failed to send OTP. Please try again.');
-      setVerificationStatus('idle');
-    }
-  };
-
-  const handleVerifyOtp = async () => {
-    if (!otp.trim() || otp.length !== 6) {
-      alert('Please enter a valid 6-digit OTP');
-      return;
-    }
+    console.log('Initiating call to:', phoneNumber);
+    setCallStatus('calling');
     
     try {
-      setVerificationStatus('verifying');
-      // TODO: Replace with actual API call to verify OTP
-      // const response = await fetch('/api/twilio/verify-otp', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ 
-      //     to: phoneNumber,
-      //     code: otp,
-      //     verificationSid: verificationSid
-      //   })
-      // });
-      // const data = await response.json();
+      const requestBody = { phone_number: phoneNumber };
+      console.log('Request body:', requestBody);
       
-      // Simulate API call
-      setTimeout(() => {
-        setVerificationStatus('verified');
-      }, 1500);
+      // Use CORS proxy in development, direct in production
+      const proxyUrl = import.meta.env.DEV 
+        ? 'https://api.allorigins.win/raw?url='
+        : '';
+      const targetUrl = import.meta.env.DEV
+        ? encodeURIComponent('http://13.201.24.246:8000/outbound')
+        : '/api/outbound';
       
-    } catch (error) {
-      console.error('Error verifying OTP:', error);
-      alert('Failed to verify OTP. Please try again.');
-      setVerificationStatus('idle');
+      const apiUrl = proxyUrl + targetUrl;
+      console.log('Making API call to:', apiUrl);
+      console.log('Request headers:', {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      });
+      console.log('Request body:', JSON.stringify(requestBody, null, 2));
+      
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: JSON.stringify(requestBody),
+          credentials: 'include' // Include cookies if needed
+        });
+        
+        console.log('Response status:', response.status);
+        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+        
+        const responseText = await response.text();
+        console.log('Raw response text:', responseText);
+        
+        if (!response.ok) {
+          console.error('Error response status:', response.status);
+          console.error('Error response text:', responseText);
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        let responseData;
+        try {
+          responseData = responseText ? JSON.parse(responseText) : {};
+          console.log('Parsed response data:', responseData);
+        } catch (e) {
+          console.warn('Failed to parse JSON response, using raw text');
+          responseData = responseText;
+        }
+      
+        console.log('API Response:', responseData);
+        setCallStatus('called');
+        return; // Success case, exit the function
+      } catch (innerError) {
+        console.error('Error in API call:', innerError);
+        throw innerError; // Re-throw to be caught by outer catch
+      }
+    } catch (error: unknown) {
+      let errorMessage = 'Failed to initiate call';
+      
+      if (error instanceof Error) {
+        console.error('Error details:', {
+          name: error.name,
+          message: error.message,
+          stack: error.stack,
+          fullError: JSON.stringify(error, Object.getOwnPropertyNames(error))
+        });
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+      
+      alert(`Failed to initiate call: ${errorMessage}`);
+      setCallStatus('idle');
     }
   };
 
-  const handleCallMe = async () => {
-    try {
-      // TODO: Replace with actual API call to initiate the call
-      // const response = await fetch('/api/twilio/call', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ to: phoneNumber })
-      // });
-      // const data = await response.json();
-      
-      alert(`Call initiated to ${phoneNumber}`);
-    } catch (error) {
-      console.error('Error initiating call:', error);
-      alert('Failed to initiate call. Please try again.');
-    }
-  };
-
-  const resetVerification = () => {
-    setVerificationStatus('idle');
-    setOtp('');
+  const resetCall = () => {
+    setCallStatus('idle');
+    setPhoneNumber('');
   };
 
   const renderIntegrations = () => (
@@ -912,17 +996,13 @@ export default function Dashboard() {
               <Card className="bg-white/5 border-white/10 hover:border-primary/50 transition-colors">
                 <CardContent className="p-6 flex flex-col items-center text-center">
                   <div className="w-20 h-20 rounded-full border border-white/10 flex items-center justify-center mb-4">
-                    {/* <img 
-                      src="/images/twilio-logo-red.png" 
-                      alt="Twilio" 
-                      className="w-10 h-10 object-contain"
-                    /> */}
+                    {/* Twilio logo placeholder */}
                   </div>
                   <h3 className="text-lg font-medium text-white mb-2">Twilio</h3>
                   <p className="text-sm text-gray-300 mb-4">Receive a phone call from our voice assistant.</p>
                   
                   <div className="w-full space-y-3">
-                    {verificationStatus === 'idle' && (
+                    {callStatus === 'idle' ? (
                       <>
                         <div className="space-y-2">
                           <Input
@@ -931,126 +1011,55 @@ export default function Dashboard() {
                             className="bg-white/5 border-white/20 text-white placeholder-gray-400"
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
-                            disabled={verificationStatus !== 'idle'}
                           />
                           <p className="text-xs text-gray-400 text-left">Include country code (e.g., +1 for US)</p>
                         </div>
-                        
                         <Button 
-                          onClick={handleSendOtp}
-                          disabled={verificationStatus !== 'idle' || !phoneNumber.trim()}
-                          className="bg-blue-600 hover:bg-blue-700 text-white w-full"
-                        >
-                          Verify Phone Number
-                        </Button>
-                      </>
-                    )}
-                    
-                    {verificationStatus === 'sending' && (
-                      <div className="text-center py-4">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
-                        <p className="text-sm text-gray-300">Sending verification code...</p>
-                      </div>
-                    )}
-                    
-                    {(verificationStatus === 'verifying' || verificationStatus === 'verified') && (
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <p className="text-sm text-gray-300">We've sent a 6-digit code to {phoneNumber}</p>
-                          <Input
-                            type="text"
-                            placeholder="Enter 6-digit OTP"
-                            className="bg-white/5 border-white/20 text-white placeholder-gray-400 text-center text-xl tracking-widest h-12"
-                            value={otp}
-                            onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                            maxLength={6}
-                            disabled={verificationStatus === 'verified'}
-                          />
-                        </div>
-                        
-                        {verificationStatus === 'verifying' ? (
-                          <>
-                            <Button 
-                              onClick={handleVerifyOtp}
-                              disabled={!otp || otp.length !== 6}
-                              className="bg-blue-600 hover:bg-blue-700 text-white w-full"
-                            >
-                              Verify OTP
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              onClick={resetVerification}
-                              className="text-xs text-gray-400 hover:text-white w-full"
-                            >
-                              Use a different number
-                            </Button>
-                          </>
-                        ) : (
-                          <div className="flex items-center justify-center space-x-2 text-green-400">
-                            <CheckCircle className="w-5 h-5" />
-                            <span>Phone number verified successfully!</span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                    
-                    {verificationStatus === 'verified' && (
-                      <>
-                        <div className="relative my-4">
-                          <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t border-white/10"></span>
-                          </div>
-                          <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-white/5 px-2 text-gray-400">Ready to Call</span>
-                          </div>
-                        </div>
-                        
-                        <Button 
+                          className="w-full bg-primary hover:bg-primary/90"
                           onClick={handleCallMe}
-                          className="bg-green-600 hover:bg-green-700 text-white w-full"
+                          disabled={!phoneNumber}
                         >
-                          Get a Call Now
+                          <Phone className="w-4 h-4 mr-2" />
+                          Get a Call
                         </Button>
                       </>
+                    ) : callStatus === 'calling' ? (
+                      <div className="py-4 text-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
+                        <p className="text-sm text-gray-300">Initiating call to {phoneNumber}...</p>
+                      </div>
+                    ) : (
+                      <div className="text-center py-4">
+                        <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-2" />
+                        <p className="text-green-400 font-medium mb-2">Call initiated!</p>
+                        <p className="text-sm text-gray-300 mb-4">You should receive a call shortly on {phoneNumber}.</p>
+                        <Button 
+                          variant="outline" 
+                          className="border-white/20 text-white hover:bg-white/10"
+                          onClick={resetCall}
+                        >
+                          Call Another Number
+                        </Button>
+                      </div>
                     )}
-                    
-                    <div className="relative my-4">
-                      <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t border-white/10"></span>
-                      </div>
-                      <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-white/5 px-2 text-gray-400">Or</span>
-                      </div>
-                    </div>
-                    
-                    <Button 
-                      variant="outline"
-                      onClick={() => window.open('https://www.twilio.com/en-us', '_blank')}
-                      className="bg-transparent border-white/20 text-white hover:bg-white/10 w-full"
-                    >
-                      Connect your voice assistant with Twilio
-                    </Button>
                   </div>
                 </CardContent>
               </Card>
               
-              {/* WhatsApp Integration - Coming Soon */}
+              {/* WhatsApp Integration Card - Coming Soon */}
               <Card className="bg-white/5 border-white/10 opacity-70">
                 <CardContent className="p-6 flex flex-col items-center text-center">
                   <div className="w-20 h-20 rounded-full border border-white/10 flex items-center justify-center mb-4">
-                    {/* <img 
-                      src="/images/WhatsApp.svg.png" 
-                      alt="WhatsApp" 
-                      className="w-10 h-10 object-contain"
-                    /> */}
+                    {/* WhatsApp logo placeholder */}
                   </div>
                   <h3 className="text-lg font-medium text-white mb-2">WhatsApp</h3>
-                  <p className="text-sm text-gray-300 mb-4">Coming Soon: WhatsApp integration for your voice assistant</p>
+                  <p className="text-sm text-gray-300 mb-4">Coming Soon</p>
                   <Button 
+                    variant="outline" 
+                    className="w-full border-white/20 text-white hover:bg-white/10"
                     disabled
-                    className="bg-green-600 hover:bg-green-700 text-white w-full opacity-50 cursor-not-allowed"
                   >
-                    Coming Soon
+                    Connect WhatsApp
                   </Button>
                 </CardContent>
               </Card>
