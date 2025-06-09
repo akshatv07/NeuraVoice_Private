@@ -56,17 +56,32 @@ export default function Dashboard() {
   const [createdAssistant, setCreatedAssistant] = useState<{name: string, id: string} | null>(null);
   const [selectedAssistant, setSelectedAssistant] = useState<string>("");
   const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
-  const [customPrompt, setCustomPrompt] = useState<string>("");
+  const [customVoicePersona, setCustomVoicePersona] = useState<string>("");
+  const [urlInput, setUrlInput] = useState<string>("");
+  const [addedUrls, setAddedUrls] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
   const [showCustomPrompt, setShowCustomPrompt] = useState<boolean>(true);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [callStatus, setCallStatus] = useState<'idle' | 'calling' | 'called'>('idle');
   const [selectedAnalyticsAssistant, setSelectedAnalyticsAssistant] = useState<string>("");
+  const [backgroundSound, setBackgroundSound] = useState<string>('none');
+  const [guardrails, setGuardrails] = useState({
+    avoidProfanity: false,
+    stickToInfo: false,
+    politeTone: false
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const handleGuardrailChange = (key: keyof typeof guardrails) => {
+    setGuardrails(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
   const handleSubmitCustomPrompt = () => {
-    if (!customPrompt.trim()) return;
+    if (!customVoicePersona.trim()) return;
     
     setIsSubmitting(true);
     
@@ -81,6 +96,20 @@ export default function Dashboard() {
         setSubmitSuccess(false);
       }, 3000);
     }, 1000);
+  };
+
+  const addUrl = () => {
+    const trimmedUrl = urlInput.trim();
+    if (trimmedUrl) {
+      // Add the URL to our list of URLs
+      setAddedUrls(prev => [...prev, trimmedUrl]);
+      // Clear the input after adding
+      setUrlInput('');
+    }
+  };
+
+  const removeUrl = (urlToRemove: string) => {
+    setAddedUrls(prev => prev.filter(url => url !== urlToRemove));
   };
 
   const promptTemplates = [
@@ -201,17 +230,111 @@ export default function Dashboard() {
     }
   ];
 
-  const handleSubmit = () => {
-    if (botName && selectedGoal && selectedModel && selectedPersona) {
-      const newAssistant = { 
-        id: `bot-${Date.now()}`,
-        name: botName 
-      };
-      setCreatedAssistant(newAssistant);
-      setSelectedAssistant(newAssistant.id);
+  const handleSubmit = async () => {
+    if (!botName || !selectedGoal || !selectedPersona) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    // Create the JSON payload
+    const payload = {
+      name: botName,
+      persona: selectedPersona,
+      goal: selectedGoal,
+      domain: selectedDomain,
+      department: selectedDepartment,
+      strategyPrompt: strategyPrompt,
+      customVoicePersona: customVoicePersona,
+      backgroundSound: backgroundSound,
+      // Include guardrails in the payload
+      guardrails: {
+        avoidProfanity: guardrails.avoidProfanity,
+        stickToProvidedInfo: guardrails.stickToInfo,
+        maintainPoliteTone: guardrails.politeTone
+      },
+      // Include added URLs
+      urls: addedUrls,
+      // Only include file metadata, not the actual files
+      fileReferences: selectedFiles.map(file => ({
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        // You might want to add an uploadId or reference from the file upload API
+        uploadId: `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      })),
+      createdAt: new Date().toISOString()
+    };
+
+    try {
+      // Log the JSON payload for testing
+      console.log('JSON Payload:', JSON.stringify(payload, null, 2));
+      
+      // TODO: Replace with your actual API endpoint
+      const API_ENDPOINT = 'YOUR_API_ENDPOINT_HERE';
+      
+      // Send JSON data to the API
+      const response = await fetch(API_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Uncomment and add your auth token if needed
+          // 'Authorization': `Bearer ${process.env.REACT_APP_API_KEY}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      // Get the response text first to check if it's valid JSON
+      const responseText = await response.text();
+      let responseData;
+      
+      try {
+        // Try to parse the response as JSON
+        responseData = responseText ? JSON.parse(responseText) : {};
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        // If we get here, the response wasn't JSON
+        console.error('Failed to parse JSON response:', {
+          status: response.status,
+          statusText: response.statusText,
+          responseText: responseText.substring(0, 1000), // Log first 1000 chars
+          error: errorMessage
+        });
+        
+        throw new Error(`Expected JSON response, but received: ${responseText.substring(0, 200)}...`);
+      }
+
+      if (!response.ok) {
+        console.error('API Error Response:', {
+          status: response.status,
+          statusText: response.statusText,
+          data: responseData
+        });
+        throw new Error(responseData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      // Update UI with the new assistant
+      setCreatedAssistant({
+        id: responseData.id || `bot-${Date.now()}`,
+        name: responseData.name || botName
+      });
+      setSelectedAssistant(responseData.id);
       setShowCreateBot(false);
       setShowCongrats(true);
+      
+      // Reset form
+      setBotName('');
+      setSelectedModel('');
+      setSelectedPersona('');
+      setSelectedGoal('');
+      setSelectedFiles([]);
+      setStrategyPrompt('');
+      setCustomVoicePersona('');
+      
       setTimeout(() => setShowCongrats(false), 4000);
+      
+    } catch (error) {
+      console.error('Error creating voice assistant:', error);
+      alert(`Error: ${error.message || 'Failed to create voice assistant. Please try again.'}`);
     }
   };
 
@@ -360,15 +483,30 @@ export default function Dashboard() {
               <div className="space-y-2">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                   <div className="flex items-center space-x-2">
-                    <Checkbox id="no-profanity" className="border-white/30 data-[state=checked]:bg-primary" />
+                    <Checkbox 
+                      id="no-profanity" 
+                      className="border-white/30 data-[state=checked]:bg-primary" 
+                      checked={guardrails.avoidProfanity}
+                      onCheckedChange={() => handleGuardrailChange('avoidProfanity')}
+                    />
                     <Label htmlFor="no-profanity" className="text-sm font-normal text-gray-300">Avoid profanity</Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Checkbox id="stick-to-info" className="border-white/30 data-[state=checked]:bg-primary" />
+                    <Checkbox 
+                      id="stick-to-info" 
+                      className="border-white/30 data-[state=checked]:bg-primary"
+                      checked={guardrails.stickToInfo}
+                      onCheckedChange={() => handleGuardrailChange('stickToInfo')}
+                    />
                     <Label htmlFor="stick-to-info" className="text-sm font-normal text-gray-300">Stick to provided information</Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Checkbox id="polite-tone" className="border-white/30 data-[state=checked]:bg-primary" />
+                    <Checkbox 
+                      id="polite-tone" 
+                      className="border-white/30 data-[state=checked]:bg-primary"
+                      checked={guardrails.politeTone}
+                      onCheckedChange={() => handleGuardrailChange('politeTone')}
+                    />
                     <Label htmlFor="polite-tone" className="text-sm font-normal text-gray-300">Maintain a polite tone</Label>
                   </div>
                 </div>
@@ -377,6 +515,8 @@ export default function Dashboard() {
                 </Label>
                 <Textarea
                   id="strategyPrompt"
+                  value={strategyPrompt}
+                  onChange={(e) => setStrategyPrompt(e.target.value)}
                   placeholder="Example: Act as a friendly and professional assistant that helps users with their banking needs. Be concise and focus on providing accurate information..."
                   className="min-h-[100px] bg-white/10 border-white/20 text-white placeholder-gray-400"
                 />
@@ -454,10 +594,44 @@ export default function Dashboard() {
                 
                 <TabsContent value="url" className="mt-4">
                   <div className="space-y-3">
-                    <Input 
-                      placeholder="https://example.com"
-                      className="bg-white/10 border-white/20 text-white"
-                    />
+                    <div className="flex gap-2">
+                      <Input 
+                        placeholder="https://example.com"
+                        className="bg-white/10 border-white/20 text-white flex-1"
+                        value={urlInput}
+                        onChange={(e) => setUrlInput(e.target.value)}
+                      />
+                      <Button 
+                        onClick={addUrl}
+                        disabled={!urlInput.trim()}
+                        className="bg-primary hover:bg-primary/90"
+                      >
+                        Add
+                      </Button>
+                    </div>
+                    {addedUrls.length > 0 && (
+                      <div className="mt-2 space-y-2">
+                        <p className="text-xs font-medium text-gray-300">Added URLs:</p>
+                        <div className="space-y-1 max-h-32 overflow-y-auto">
+                          {addedUrls.map((url, index) => (
+                            <div key={index} className="flex items-center justify-between bg-white/5 p-2 rounded text-sm">
+                              <span className="truncate max-w-xs text-gray-300">{url}</span>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="text-red-400 hover:text-red-300 h-6 w-6 p-0"
+                                onClick={() => removeUrl(url)}
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <p className="text-xs text-gray-400">
+                      Add a URL to include web content in your assistant's knowledge
+                    </p>
                   </div>
                 </TabsContent>
               </Tabs>
@@ -560,7 +734,7 @@ export default function Dashboard() {
                           <div
                             key={template.title}
                             className="p-4 border rounded-lg cursor-pointer hover:bg-white/5 transition-colors"
-                            onClick={() => setCustomPrompt(template.content)}
+                            onClick={() => setCustomVoicePersona(template.content)}
                           >
                             <h4 className="font-medium">{template.title}</h4>
                             <p className="text-sm text-gray-400">{template.description}</p>
@@ -572,17 +746,17 @@ export default function Dashboard() {
                           <Textarea
                             placeholder="Or describe the voice personality you're looking for..."
                             className="bg-white/10 border-white/20 text-white min-h-[120px]"
-                            value={customPrompt}
-                            onChange={(e) => setCustomPrompt(e.target.value)}
+                            value={customVoicePersona}
+                            onChange={(e) => setCustomVoicePersona(e.target.value)}
                             disabled={isSubmitting}
                           />
                           <div className="text-xs text-gray-400 text-right mt-1">
-                            {customPrompt.length}/1000 characters
+                            {customVoicePersona.length}/1000 characters
                           </div>
                         </div>
                         <Button
                           onClick={handleSubmitCustomPrompt}
-                          disabled={!customPrompt.trim() || isSubmitting}
+                          disabled={!customVoicePersona.trim() || isSubmitting}
                           className="w-full sm:w-auto"
                         >
                           {isSubmitting ? 'Generating...' : 'Generate Custom Persona'}
@@ -611,14 +785,18 @@ export default function Dashboard() {
                       <span className="text-xs text-gray-500">Optional</span>
                     </div>
                     <div>
-                      <Select defaultValue="none">
+                      <Select 
+                        value={backgroundSound}
+                        onValueChange={setBackgroundSound}
+                        defaultValue="none"
+                      >
                         <SelectTrigger className="w-full bg-white/10 border-white/20 text-white h-8 text-sm hover:bg-white/15 transition-colors">
                           <SelectValue placeholder="Select sound" />
                         </SelectTrigger>
                         <SelectContent className="bg-dark-navy border-white/20 text-sm w-[--radix-select-trigger-width]">
-                          <SelectItem value="none" className="hover:bg-white/10">Default(None)</SelectItem>
+                          <SelectItem value="none" className="hover:bg-white/10">Default (None)</SelectItem>
                           <SelectItem value="office" className="hover:bg-white/10">Office Premise</SelectItem>
-                          <SelectItem value="reception" className="hover:bg-white/10">Reception </SelectItem>
+                          <SelectItem value="reception" className="hover:bg-white/10">Reception</SelectItem>
                           <SelectItem value="conference" className="hover:bg-white/10">Conference Room</SelectItem>
                         </SelectContent>
                       </Select>

@@ -670,6 +670,184 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Pricing Section */}
+      <section id="pricing" className="py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-dark-navy via-midnight to-primary/10"></div>
+        
+        <div className="container mx-auto px-6 relative z-10">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+              Simple, Transparent Pricing
+            </h2>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Choose the perfect plan for your business needs
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+            {[
+              {
+                name: "Launch",
+                price: "₹0",
+                period: "/month",
+                description: "The beginning of your voice journey",
+                buttonText: "Get Started",
+                featured: false,
+                features: [
+                  { text: "300 Credits", available: true },
+                  { text: "50 Voice Minutes", available: true },
+                  { text: "1 Bot/Assistant", available: true },
+                  { text: "1 Concurrent Call", available: true },
+                  { text: "Up to 15MB Knowledge Base", available: true },
+                  { text: "No URL Scraping", available: false },
+                  { text: "Community Support", available: true },
+                  { text: "Emotion-aware Conversations", available: true },
+                  { text: "API & Webhook Access", available: true },
+                ]
+              },
+              {
+                name: "Resonate",
+                price: "₹39,000",
+                period: "/month",
+                description: "Start engaging. Start growing.",
+                buttonText: "Start Free Trial",
+                featured: true,
+                features: [
+                  { text: "3,000 Credits", available: true },
+                  { text: "500 Voice Minutes", available: true },
+                  { text: "3 Bots/Assistants", available: true },
+                  { text: "3 Concurrent Calls", available: true },
+                  { text: "Up to 50MB Knowledge Base", available: true },
+                  { text: "3 URL Scrapes", available: true },
+                  { text: "Email/Chat Support (48h)", available: true },
+                  { text: "Multilingual TTS/STT", available: true },
+                  { text: "Silence & Disinterest Handling", available: true },
+                ]
+              },
+              {
+                name: "BotStorm",
+                price: "₹80,000",
+                period: "/month",
+                description: "Deploy at scale. Engage like never before.",
+                buttonText: "Start Free Trial",
+                featured: false,
+                features: [
+                  { text: "7,500 Credits", available: true },
+                  { text: "1,250 Voice Minutes", available: true },
+                  { text: "10 Bots/Assistants", available: true },
+                  { text: "10 Concurrent Calls", available: true },
+                  { text: "Up to 150MB Knowledge Base", available: true },
+                  { text: "10 URL Scrapes", available: true },
+                  { text: "Priority Support (24h)", available: true },
+                  { text: "Customization Support", available: true },
+                  { text: "Up to 5 Session Context", available: true },
+                ]
+              },
+              {
+                name: "NeuraGrid",
+                price: "Custom",
+                period: "",
+                description: "Enterprise-grade. Always on.",
+                buttonText: "Contact Sales",
+                featured: false,
+                features: [
+                  { text: "Custom Credits", available: true },
+                  { text: "Unlimited Voice Minutes", available: true },
+                  { text: "Unlimited Bots", available: true },
+                  { text: "Custom Concurrent Calls", available: true },
+                  { text: "Custom Knowledge Base", available: true },
+                  { text: "Custom URL Scraping", available: true },
+                  { text: "24/7 Dedicated Support", available: true },
+                  { text: "White-labeling", available: true },
+                  { text: "On-premises Deployment", available: true },
+                ]
+              }
+            ].map((plan, index) => (
+              <motion.div
+                key={index}
+                className={`relative ${plan.featured ? 'lg:-mt-6' : ''}`}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                {plan.featured && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-primary to-accent text-white text-xs font-bold px-4 py-1 rounded-full">
+                    POPULAR CHOICE
+                  </div>
+                )}
+                <Card className={`h-full transition-all duration-300 ${plan.featured ? 'border-2 border-primary/50 shadow-lg shadow-primary/20' : 'border-white/10 hover:border-primary/30'}`}>
+                  <CardContent className="p-6">
+                    <div className="text-center mb-6">
+                      <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
+                      <div className="flex items-baseline justify-center mb-2">
+                        <span className="text-4xl font-extrabold bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
+                          {plan.price}
+                        </span>
+                        {plan.period && (
+                          <span className="text-gray-400 ml-1">{plan.period}</span>
+                        )}
+                      </div>
+                      <p className="text-gray-300 text-sm">{plan.description}</p>
+                    </div>
+                    
+                    <div className="space-y-4 mb-8">
+                      {plan.features.map((feature, i) => (
+                        <div key={i} className="flex items-start">
+                          <div className={`flex-shrink-0 mt-1 mr-3 ${feature.available ? 'text-green-400' : 'text-gray-500'}`}>
+                            <i className={`fas ${feature.available ? 'fa-check-circle' : 'fa-times-circle'}`}></i>
+                          </div>
+                          <span className={`text-sm ${feature.available ? 'text-gray-200' : 'text-gray-500 line-through'}`}>
+                            {feature.text}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <Button
+                      className={`w-full py-6 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 ${
+                        plan.featured 
+                          ? 'bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90'
+                          : 'bg-white/10 hover:bg-white/20 border border-white/20'
+                      }`}
+                      onClick={() => plan.name === 'NeuraGrid' 
+                        ? window.location.href = 'mailto:sales@neuravoice.ai' 
+                        : window.location.href = '/signup'}
+                    >
+                      {plan.buttonText}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-16 text-center text-gray-400 text-sm">
+            <p>Need a custom solution? <a href="mailto:sales@neuravoice.ai" className="text-primary hover:underline">Contact our sales team</a></p>
+            <div className="mt-4 flex flex-wrap justify-center gap-6 max-w-3xl mx-auto">
+              <div className="flex items-center">
+                <i className="fas fa-check-circle text-green-400 mr-2"></i>
+                <span>No setup fees</span>
+              </div>
+              <div className="flex items-center">
+                <i className="fas fa-check-circle text-green-400 mr-2"></i>
+                <span>Cancel anytime</span>
+              </div>
+              <div className="flex items-center">
+                <i className="fas fa-check-circle text-green-400 mr-2"></i>
+                <span>7-day free trial available</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="bg-midnight/80 backdrop-blur-sm border-t border-white/10 py-12">
         <div className="container mx-auto px-6">
