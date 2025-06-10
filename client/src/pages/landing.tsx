@@ -693,7 +693,7 @@ export default function Landing() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
             {[
               {
-                name: "Launch",
+                name: "Seedling",
                 price: "₹0",
                 period: "/month",
                 description: "The beginning of your voice journey",
@@ -708,12 +708,16 @@ export default function Landing() {
                   { text: "No URL Scraping", available: false },
                   { text: "Community Support", available: true },
                   { text: "Emotion-aware Conversations", available: true },
-                  { text: "API & Webhook Access", available: true },
+                  { text: "API & Webhook Access", available: false }, // Cut off in free plan
+                  { text: "Slot Filling", available: true },
+                  { text: "Bot Retraining allowed (1)", available: true },
+                  { text: "Hallucination Prevention", available: true },
+                  { text: "Ethical Guardrails", available: true }
                 ]
               },
               {
-                name: "Resonate",
-                price: "₹39,000",
+                name: "Cognition",
+                price: "₹3900",
                 period: "/month",
                 description: "Start engaging. Start growing.",
                 buttonText: "Start Free Trial",
@@ -728,11 +732,16 @@ export default function Landing() {
                   { text: "Email/Chat Support (48h)", available: true },
                   { text: "Multilingual TTS/STT", available: true },
                   { text: "Silence & Disinterest Handling", available: true },
+                  { text: "Slot Filling", available: true },
+                  { text: "Bot Retraining allowed (3)", available: true },
+                  { text: "Hallucination Prevention", available: true },
+                  { text: "Ethical Guardrails", available: true },
+                  { text: "SOC2 Compliance", available: false, comingSoon: true },
                 ]
               },
               {
-                name: "BotStorm",
-                price: "₹80,000",
+                name: "Sentience",
+                price: "₹8000",
                 period: "/month",
                 description: "Deploy at scale. Engage like never before.",
                 buttonText: "Start Free Trial",
@@ -747,6 +756,11 @@ export default function Landing() {
                   { text: "Priority Support (24h)", available: true },
                   { text: "Customization Support", available: true },
                   { text: "Up to 5 Session Context", available: true },
+                  { text: "Bot Retraining allowed (10)", available: true },
+                  { text: "Cross-domain Bot Retraining", available: true },
+                  { text: "Advanced Content Moderation", available: true },
+                  { text: "Enhanced Hallucination Prevention", available: true },
+                  { text: "Advanced Ethical Guardrails", available: true }
                 ]
               },
               {
@@ -766,6 +780,11 @@ export default function Landing() {
                   { text: "24/7 Dedicated Support", available: true },
                   { text: "White-labeling", available: true },
                   { text: "On-premises Deployment", available: true },
+                  { text: "Advanced Cross-domain Bot Retraining", available: true },
+                  { text: "Slot Filling", available: true },
+                  { text: "Enterprise Hallucination Prevention", available: true },
+                  { text: "SOC2, HIPAA, DPA Compliance", available: true, comingSoon: true },
+                  { text: "Enterprise Ethical Guardrails", available: true },
                 ]
               }
             ].map((plan, index) => (
@@ -803,9 +822,18 @@ export default function Landing() {
                           <div className={`flex-shrink-0 mt-1 mr-3 ${feature.available ? 'text-green-400' : 'text-gray-500'}`}>
                             <i className={`fas ${feature.available ? 'fa-check-circle' : 'fa-times-circle'}`}></i>
                           </div>
-                          <span className={`text-sm ${feature.available ? 'text-gray-200' : 'text-gray-500 line-through'}`}>
-                            {feature.text}
-                          </span>
+                          <div className="flex-1">
+                            <div className="flex items-center">
+                              <span className={`text-sm ${feature.available ? 'text-gray-200' : 'text-gray-500 line-through'}`}>
+                                {feature.text}
+                              </span>
+                              {feature.comingSoon && (
+                                <span className="ml-2 text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full">
+                                  Coming Soon
+                                </span>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
